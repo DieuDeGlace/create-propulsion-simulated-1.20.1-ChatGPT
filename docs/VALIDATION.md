@@ -24,11 +24,19 @@ Last run on 2026-08-30 against the current working tree:
 | Packet protocol | Pass | Fluid and solid fuel maps, removals and efficiency values survive encode/decode. |
 | Current clean build | Pass | `gradlew.bat clean build --no-daemon --stacktrace` completed on 2026-08-30. |
 | Formal release gate | Enforced by script | Every package rebuilds from the clean annotated checkpoint and publishes its own build log/checkpoint/SHA-256 evidence. |
+| Minimal-workspace recovery | Pass for candidate `79f980d` | The published ZIP was independently extracted, its bundle cloned on the recorded branch, all five ignored named JARs reintroduced with matching hashes, the clone remained clean, and a fresh build passed 37/37 tests in 8 suites. |
 
 The packet tests deliberately use registry-independent identifiers. An earlier
 test attempt bootstrapped the full Minecraft registries under JUnit and failed
 before the assertions; it was rejected and replaced with a test of the packet
 contract itself. Production packet code was not weakened to satisfy the test.
+
+The recovery build contained the same 1,133 JAR entry names as its release
+candidate. Its archive SHA-256 was not identical: 31 text entries differed only
+by Windows checkout line endings, and the manifest contained the later
+per-build `Implementation-Timestamp`. The release SHA-256 therefore identifies
+the shipped binary; this checkpoint claims source/build recovery, not a
+byte-for-byte reproducible archive.
 
 ## Runtime matrix
 
