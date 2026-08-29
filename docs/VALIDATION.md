@@ -66,6 +66,11 @@ runtime pass.
 - The first packet unit-test design attempted full registry bootstrap and
   failed during test initialization. The registry-independent round-trip tests
   supersede it and all 37 tests pass.
+- The first formal-packaging attempt was rejected before the build because its
+  Gradle-version gate did not accept the carriage return in the real Windows
+  PowerShell 5.1 output. The observed launcher was Gradle 8.14.3 on Microsoft
+  Java 17.0.13; the gate was corrected to accept only that same version line
+  with either platform line ending. No release or dist artifact was published.
 
 ## Manual acceptance still required
 

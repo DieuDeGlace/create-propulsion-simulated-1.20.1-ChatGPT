@@ -408,7 +408,7 @@ Assert-GitCheckpoint -ExpectedHead $headCommit -ExpectedTag $tagName -ExpectedTa
 Assert-LocalInputs
 
 $gradleVersion = Get-GradleVersionText
-if ($gradleVersion -notmatch '(?m)^Gradle 8\.14\.3$' -or
+if ($gradleVersion -notmatch '(?m)^Gradle 8\.14\.3\r?$' -or
     $gradleVersion -notmatch '(?m)^Launcher JVM:\s+17\.') {
     throw "Release requires Gradle 8.14.3 on a Java 17 launcher.`n$gradleVersion"
 }
