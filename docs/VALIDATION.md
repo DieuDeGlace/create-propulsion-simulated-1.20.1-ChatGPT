@@ -71,6 +71,11 @@ runtime pass.
   PowerShell 5.1 output. The observed launcher was Gradle 8.14.3 on Microsoft
   Java 17.0.13; the gate was corrected to accept only that same version line
   with either platform line ending. No release or dist artifact was published.
+- The first complete package from checkpoint `238f91d` passed all gates but was
+  superseded before distribution when an independent recovery inspection found
+  the baseline's unreferenced root `PatchConfig.java/.class` helper artifacts.
+  They were removed without production-code changes and the package was rebuilt
+  from a new checkpoint.
 
 ## Manual acceptance still required
 

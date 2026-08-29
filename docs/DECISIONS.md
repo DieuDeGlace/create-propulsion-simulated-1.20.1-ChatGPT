@@ -72,3 +72,11 @@ The port includes individually audited post-1.1.5 correctness fixes. Later
 symmetric-wing, precise-control, creative-tool and balance feature chains are
 excluded from `1.1.5-port.1`; including them would change the supplied JAR's
 scope rather than restore its behaviour.
+
+## D-012: remove unreferenced upstream patch artifacts
+
+The baseline root contained `PatchConfig.java`, which hard-coded paths on an
+upstream developer's machine, and its compiled `PatchConfig.class`. Neither
+file is referenced by Gradle, production sources or runtime resources. Remove
+both from the port checkpoint: retaining them would make the recovery workspace
+less reproducible without preserving any mod behaviour.
