@@ -7,21 +7,19 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
 
 public class PlatinumFluidTankItem extends BlockItem {
     public PlatinumFluidTankItem(Block block, Properties properties) {
@@ -45,23 +43,22 @@ public class PlatinumFluidTankItem extends BlockItem {
         if (minecraftserver == null) {
             return false;
         }
-        CustomData blockEntityData = itemStack.get(DataComponents.BLOCK_ENTITY_DATA);
+        CompoundTag blockEntityData = BlockItem.getBlockEntityData(itemStack);
         if (blockEntityData != null) {
-            CompoundTag nbt = blockEntityData.copyTag();
+            CompoundTag nbt = blockEntityData.copy();
             nbt.remove("Luminosity");
             nbt.remove("Size");
             nbt.remove("Height");
             nbt.remove("Controller");
             nbt.remove("LastKnownPos");
             if (nbt.contains("TankContent")) {
-                FluidStack fluid = FluidStack.parseOptional(minecraftserver.registryAccess(), nbt.getCompound("TankContent"));
+                FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("TankContent"));
                 if (!fluid.isEmpty()) {
                     fluid.setAmount(Math.min(FluidTankBlockEntity.getCapacityMultiplier() * 2, fluid.getAmount()));
-                    nbt.put("TankContent", fluid.saveOptional(minecraftserver.registryAccess()));
+                    nbt.put("TankContent", fluid.writeToNBT(new CompoundTag()));
                 }
             }
-            BlockEntity.addEntityType(nbt, ((IBE<?>) this.getBlock()).getBlockEntityType());
-            itemStack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(nbt));
+            BlockItem.setBlockEntityData(itemStack, ((IBE<?>) this.getBlock()).getBlockEntityType(), nbt);
         }
         return super.updateCustomBlockEntityTag(blockPos, level, player, itemStack, blockState);
     }

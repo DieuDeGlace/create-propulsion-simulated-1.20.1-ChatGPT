@@ -35,8 +35,8 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -286,10 +286,10 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
         Item item = stack.getItem();
         for (JsonElement json : cachedDatapack.values()) {
             var result = SolidThrusterFuelDefinition.CODEC.parse(JsonOps.INSTANCE, json);
-            if (result.isError()) {
+            SolidThrusterFuelDefinition def = result.result().orElse(null);
+            if (def == null) {
                 continue;
             }
-            SolidThrusterFuelDefinition def = result.getOrThrow();
             if (def.requiredMod().isPresent() && !ModList.get().isLoaded(def.requiredMod().get())) {
                 continue;
             }

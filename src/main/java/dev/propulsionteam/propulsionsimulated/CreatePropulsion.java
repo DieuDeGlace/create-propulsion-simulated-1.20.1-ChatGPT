@@ -11,24 +11,30 @@ import dev.propulsionteam.propulsionsimulated.assemblerstick.item.ModItems;
 import com.simibubi.create.compat.Mods;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(CreatePropulsion.ID)
 public class CreatePropulsion {
     public static final String ID = "createpropulsion";
     private static final String INCOMPATIBLE_MOD_ID = "createpropulsionsimulated";
 
-    public CreatePropulsion(IEventBus modBus, ModContainer modContainer) {
+    public CreatePropulsion() {
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         if (ModList.get().isLoaded(INCOMPATIBLE_MOD_ID)) {
             throw new IllegalStateException(
                     "Create: Propulsion is incompatible with createpropulsionsimulated. "
                             + "Both mods provide the same features and cannot be loaded together.");
         }
         modBus.addListener(ModCapabilityEvents::registerCapabilities);
+        MinecraftForge.EVENT_BUS.addGenericListener(
+                net.minecraft.world.level.block.entity.BlockEntity.class,
+                ModCapabilityEvents::attachBlockEntityCapabilities);
         modBus.addListener(ModSetupEvents::onCommonSetup);
         //Content
         ParticleTypes.register(modBus);
@@ -40,7 +46,7 @@ public class CreatePropulsion {
         PropulsionFluids.register(modBus);
         PropulsionPartialModels.register();
         PropulsionCreativeTab.register(modBus);
-        modBus.addListener(PropulsionPackets::register);
+        PropulsionPackets.register();
         PropulsionDisplaySources.register();
         PropulsionSableBridge.init();
 
@@ -48,12 +54,12 @@ public class CreatePropulsion {
         Mods.COMPUTERCRAFT.executeIfInstalled(() -> CCProxy::register);
 
         //Config
-        modContainer.registerConfig(ModConfig.Type.COMMON, PropulsionConfig.COMMON_SPEC, ID + "-common.toml");
-        modContainer.registerConfig(ModConfig.Type.CLIENT, PropulsionConfig.CLIENT_SPEC, ID + "-client.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, PropulsionConfig.COMMON_SPEC, ID + "-common.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, PropulsionConfig.CLIENT_SPEC, ID + "-client.toml");
         PropulsionDefaultStress.init(PropulsionConfig.COMMON_SPEC);
     }
 
     public static ResourceLocation loc(String loc) {
-        return ResourceLocation.fromNamespaceAndPath(ID, loc);
+        return new ResourceLocation(ID, loc);
     }
 }

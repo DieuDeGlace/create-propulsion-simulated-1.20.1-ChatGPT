@@ -25,8 +25,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.joml.Vector3d;
 import java.util.List;
 
@@ -103,7 +103,7 @@ public class LiquidVectorThrusterBlockEntity extends VectorThrusterBlockEntity {
     }
 
     private void setSignal(int power, Direction localSide) {
-        int clamped = Math.clamp(power, 0, 15);
+        int clamped = net.minecraft.util.Mth.clamp(power, 0, 15);
         int prev = switch (localSide) {
             case WEST -> westSignal;
             case EAST -> eastSignal;
@@ -177,6 +177,31 @@ public class LiquidVectorThrusterBlockEntity extends VectorThrusterBlockEntity {
     }
 
     @Override
+    protected boolean requiresPerTickEnergyUpdate() {
+        return false;
+    }
+
+    @Override
+    protected boolean usesFluidFuelAccounting() {
+        return true;
+    }
+
+    @Override
+    protected boolean shouldSyncThrustImmediately() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldSyncThrottleImmediately() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldSyncFuelTelemetryImmediately() {
+        return false;
+    }
+
+    @Override
     public Vector3d getThrustDirectionLocal() {
         Vector3d localExhaust = computeExhaustDirectionLocal();
         if (localExhaust.lengthSquared() < 1e-8) {
@@ -244,7 +269,7 @@ public class LiquidVectorThrusterBlockEntity extends VectorThrusterBlockEntity {
         double firstHitDistance = sample.firstHitDistance();
         float newEfficiency = scanLength <= 0
             ? 0.0f
-            : Math.clamp((float) (firstHitDistance / scanLength), 0.0f, 1.0f);
+            : net.minecraft.util.Mth.clamp((float) (firstHitDistance / scanLength), 0.0f, 1.0f);
         int newEmptyBlocks = sample.emptyBlocksEstimate();
 
         if (this.emptyBlocks != newEmptyBlocks || Math.abs(this.obstructionEfficiency - newEfficiency) > 1e-4f) {
@@ -444,8 +469,8 @@ public class LiquidVectorThrusterBlockEntity extends VectorThrusterBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound,  boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putInt("WestSignal", westSignal);
         compound.putInt("EastSignal", eastSignal);
         compound.putInt("DownSignal", downSignal);
@@ -458,8 +483,8 @@ public class LiquidVectorThrusterBlockEntity extends VectorThrusterBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
         westSignal = compound.getInt("WestSignal");
         eastSignal = compound.getInt("EastSignal");
         downSignal = compound.getInt("DownSignal");
@@ -477,7 +502,7 @@ public class LiquidVectorThrusterBlockEntity extends VectorThrusterBlockEntity {
         int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
         obstructionEfficiency = compound.contains("ObstructionEfficiency")
             ? compound.getFloat("ObstructionEfficiency")
-            : (scanLength <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) scanLength, 0.0f, 1.0f));
+            : (scanLength <= 0 ? 0.0f : net.minecraft.util.Mth.clamp((float) emptyBlocks / (float) scanLength, 0.0f, 1.0f));
     }
 
     private static class VectorThrusterLinkTransform extends ValueBoxTransform.Dual {

@@ -1,9 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.particles.plume;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.foundation.particle.ICustomParticleDataWithSprite;
@@ -11,14 +9,28 @@ import com.simibubi.create.foundation.particle.ICustomParticleDataWithSprite;
 import net.minecraft.client.particle.ParticleEngine.SpriteParticleRegistration;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import dev.propulsionteam.propulsionsimulated.particles.ParticleTypes;
+import dev.propulsionteam.propulsionsimulated.particles.VariableParticleDataSerialization;
 
 public class PlumeParticleData implements ParticleOptions, ICustomParticleDataWithSprite<PlumeParticleData> {
+    public static final Codec<PlumeParticleData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        ResourceLocation.CODEC.listOf().optionalFieldOf("override_textures", List.of()).forGetter(PlumeParticleData::overrideTextures),
+        Codec.INT.optionalFieldOf("override_color").forGetter(data -> java.util.Optional.ofNullable(data.overrideColor)),
+        Codec.FLOAT.optionalFieldOf("override_size").forGetter(data -> java.util.Optional.ofNullable(data.overrideSize)),
+        Codec.FLOAT.optionalFieldOf("startup_progress").forGetter(data -> java.util.Optional.ofNullable(data.startupProgress)),
+        Codec.DOUBLE.optionalFieldOf("inherited_velocity_x", 0.0d).forGetter(data -> data.inheritedVelocity.x),
+        Codec.DOUBLE.optionalFieldOf("inherited_velocity_y", 0.0d).forGetter(data -> data.inheritedVelocity.y),
+        Codec.DOUBLE.optionalFieldOf("inherited_velocity_z", 0.0d).forGetter(data -> data.inheritedVelocity.z),
+        Codec.FLOAT.optionalFieldOf("trail_coverage", 0.0f).forGetter(PlumeParticleData::trailCoverage)
+    ).apply(instance, (textures, color, size, startup, vx, vy, vz, coverage) -> new PlumeParticleData(
+            textures, color.orElse(null), size.orElse(null), startup.orElse(null), new Vec3(vx, vy, vz), coverage)));
+    public static final ParticleOptions.Deserializer<PlumeParticleData> DESERIALIZER =
+            VariableParticleDataSerialization.deserializer(PlumeParticleData::new);
+
     private final List<ResourceLocation> overrideTextures;
     private final Integer overrideColor;
     private final Float overrideSize;
@@ -79,47 +91,25 @@ public class PlumeParticleData implements ParticleOptions, ICustomParticleDataWi
         return ParticleTypes.getPlumeType();
     }
 
-    public MapCodec<PlumeParticleData> getCodec(ParticleType<PlumeParticleData> type) {
-		return RecordCodecBuilder.mapCodec(instance -> instance.group(
-            ResourceLocation.CODEC.listOf().optionalFieldOf("override_textures", List.of()).forGetter(PlumeParticleData::overrideTextures),
-            Codec.INT.optionalFieldOf("override_color").forGetter(data -> java.util.Optional.ofNullable(data.overrideColor)),
-            Codec.FLOAT.optionalFieldOf("override_size").forGetter(data -> java.util.Optional.ofNullable(data.overrideSize)),
-            Codec.FLOAT.optionalFieldOf("startup_progress").forGetter(data -> java.util.Optional.ofNullable(data.startupProgress)),
-            Codec.DOUBLE.optionalFieldOf("inherited_velocity_x", 0.0d).forGetter(data -> data.inheritedVelocity.x),
-            Codec.DOUBLE.optionalFieldOf("inherited_velocity_y", 0.0d).forGetter(data -> data.inheritedVelocity.y),
-            Codec.DOUBLE.optionalFieldOf("inherited_velocity_z", 0.0d).forGetter(data -> data.inheritedVelocity.z),
-            Codec.FLOAT.optionalFieldOf("trail_coverage", 0.0f).forGetter(PlumeParticleData::trailCoverage)
-        ).apply(instance, (textures, color, size, startup, vx, vy, vz, coverage) -> new PlumeParticleData(
-                textures, color.orElse(null), size.orElse(null), startup.orElse(null), new Vec3(vx, vy, vz), coverage)));
-	}
+    public Codec<PlumeParticleData> getCodec(ParticleType<PlumeParticleData> type) {
+        return CODEC;
+    }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, PlumeParticleData> getStreamCodec() {
-        return StreamCodec.of((buf, data) -> {
-            buf.writeCollection(data.overrideTextures, (b, rl) -> b.writeResourceLocation(rl));
-            buf.writeBoolean(data.overrideColor != null);
-            if (data.overrideColor != null) {
-                buf.writeInt(data.overrideColor);
-            }
-            buf.writeBoolean(data.overrideSize != null);
-            if (data.overrideSize != null) {
-                buf.writeFloat(data.overrideSize);
-            }
-            buf.writeBoolean(data.startupProgress != null);
-            if (data.startupProgress != null) buf.writeFloat(data.startupProgress);
-            buf.writeDouble(data.inheritedVelocity.x);
-            buf.writeDouble(data.inheritedVelocity.y);
-            buf.writeDouble(data.inheritedVelocity.z);
-            buf.writeFloat(data.trailCoverage);
-        }, buf -> {
-            List<ResourceLocation> textures = buf.readCollection(ArrayList::new, b -> b.readResourceLocation());
-            Integer color = buf.readBoolean() ? buf.readInt() : null;
-            Float size = buf.readBoolean() ? buf.readFloat() : null;
-            Float startup = buf.readBoolean() ? buf.readFloat() : null;
-            Vec3 inheritedVelocity = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
-            float coverage = buf.readFloat();
-            return new PlumeParticleData(textures, color, size, startup, inheritedVelocity, coverage);
-        });
+    public ParticleOptions.Deserializer<PlumeParticleData> getDeserializer() {
+        return DESERIALIZER;
+    }
+
+    @Override
+    public void writeToNetwork(FriendlyByteBuf buffer) {
+        VariableParticleDataSerialization.write(buffer, overrideTextures, overrideColor, overrideSize,
+                startupProgress, inheritedVelocity, trailCoverage);
+    }
+
+    @Override
+    public String writeToString() {
+        return VariableParticleDataSerialization.writeToString(ParticleTypes.PLUME.parameter(), overrideTextures,
+                overrideColor, overrideSize, startupProgress, inheritedVelocity, trailCoverage);
     }
 
     @Override

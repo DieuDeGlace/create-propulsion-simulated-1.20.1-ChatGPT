@@ -1,7 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.content.heat;
 
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.INBTSerializable;
 
 public class HeatBuffer implements IHeatSource, INBTSerializable<CompoundTag> {
     protected float heat;
@@ -44,7 +44,7 @@ public class HeatBuffer implements IHeatSource, INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider registries) {
+    public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putFloat("Heat", this.heat);
         tag.putFloat("Capacity", this.capacity);
@@ -52,7 +52,7 @@ public class HeatBuffer implements IHeatSource, INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider registries, CompoundTag nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         this.heat = nbt.getFloat("Heat");
         this.capacity = nbt.getFloat("Capacity");
     }

@@ -28,10 +28,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
     protected SmartFluidTankBehaviour tank;
@@ -186,7 +186,7 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
         if (this.tank == null) {
             return false;
         }
-        final IFluidHandlerItem itemFluidHandler = heldStack.getCapability(Capabilities.FluidHandler.ITEM);
+        final IFluidHandlerItem itemFluidHandler = heldStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).orElse(null);
         if (itemFluidHandler == null || itemFluidHandler.getTanks() <= 0) {
             return false;
         }
@@ -243,7 +243,8 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
 
     @Override
     protected void addSpecificTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        containedFluidTooltip(tooltip, isPlayerSneaking, tank.getPrimaryHandler());
+        containedFluidTooltip(tooltip, isPlayerSneaking,
+            net.minecraftforge.common.util.LazyOptional.of(tank::getPrimaryHandler));
     }
 
     public IFluidHandler getPrimaryFluidHandler() {
@@ -268,15 +269,15 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    protected void write(CompoundTag tag,  boolean clientPacket) {
+        super.write(tag, clientPacket);
         tag.putInt("burnTime", burnTime);
         tag.putFloat("burnEfficiency", burnEfficiency);
     }
 
     @Override
-    protected void read(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
+    protected void read(CompoundTag tag,  boolean clientPacket) {
+        super.read(tag, clientPacket);
         burnTime = tag.getInt("burnTime");
         burnEfficiency = tag.contains("burnEfficiency") ? tag.getFloat("burnEfficiency") : 1.0f;
     }

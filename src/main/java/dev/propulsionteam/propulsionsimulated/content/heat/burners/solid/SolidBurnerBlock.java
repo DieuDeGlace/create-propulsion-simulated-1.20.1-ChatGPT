@@ -6,7 +6,6 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurne
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.utility.burners.BurnerFuelBehaviour;
-import com.mojang.serialization.MapCodec;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 
 import net.minecraft.core.BlockPos;
@@ -19,7 +18,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -100,17 +98,11 @@ public class SolidBurnerBlock extends AbstractBurnerBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hit) {
         return handleUse(state, level, pos, player, hand)
-            ? ItemInteractionResult.SUCCESS
-            : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        return handleUse(state, level, pos, player, InteractionHand.MAIN_HAND)
-            ? InteractionResult.SUCCESS
-            : InteractionResult.PASS;
+                ? InteractionResult.sidedSuccess(level.isClientSide)
+                : InteractionResult.PASS;
     }
 
     @Override
@@ -166,11 +158,6 @@ public class SolidBurnerBlock extends AbstractBurnerBlock {
             double d7 = direction$axis == Direction.Axis.Z ? (double)direction.getStepZ() * 0.52D : d4;
             pLevel.addParticle(ParticleTypes.SMOKE, d0 + d5, d1 + d6, d2 + d7, 0.0D, 0.0D, 0.0D);
         }
-    }
-
-    @Override
-    protected MapCodec<SolidBurnerBlock> codec() {
-        return Block.CODEC.xmap(props -> (SolidBurnerBlock) this, block -> (SolidBurnerBlock) block);
     }
 }
 

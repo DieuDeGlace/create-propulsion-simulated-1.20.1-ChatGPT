@@ -7,7 +7,6 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.Thruster
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-import com.mojang.serialization.MapCodec;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -26,7 +25,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nonnull;
 
 public class IonThrusterBlock extends AbstractThrusterBlock {
-    public static final MapCodec<IonThrusterBlock> CODEC = simpleCodec(IonThrusterBlock::new);
 
     public IonThrusterBlock(final Properties properties) {
         super(properties);
@@ -40,7 +38,7 @@ public class IonThrusterBlock extends AbstractThrusterBlock {
     }
 
     @Override
-    protected VoxelShape getShape(final BlockState state,
+    public VoxelShape getShape(final BlockState state,
                                   final BlockGetter level,
                                   final BlockPos pos,
                                   final CollisionContext context) {
@@ -81,11 +79,6 @@ public class IonThrusterBlock extends AbstractThrusterBlock {
             }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 }
 

@@ -1,6 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster;
 
-import com.mojang.serialization.MapCodec;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
@@ -14,15 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nonnull;
 
 public class LiquidVectorThrusterBlock extends VectorThrusterBlock {
-    public static final MapCodec<LiquidVectorThrusterBlock> CODEC = simpleCodec(LiquidVectorThrusterBlock::new);
 
     public LiquidVectorThrusterBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
 

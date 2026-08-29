@@ -33,22 +33,15 @@ import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.material.FluidState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.sound.SoundEngineLoadEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.event.sound.SoundEngineLoadEvent;
 import dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster.SolidFuelThrusterRenderer;
 
 @SuppressWarnings("removal")
@@ -66,92 +59,8 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent
-    public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+    public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
         // Removed assembly gauge overlay.
-    }
-
-    @SubscribeEvent
-    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerFluidType(new IClientFluidTypeExtensions() {
-            @Override
-            public ResourceLocation getStillTexture() {
-                return ResourceLocation.parse("minecraft:block/water_still");
-            }
-
-            @Override
-            public ResourceLocation getFlowingTexture() {
-                return ResourceLocation.parse("minecraft:block/water_flow");
-            }
-
-            @Override
-            public int getTintColor() {
-                return 0xFFD69E49;
-            }
-
-            @Override
-            public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
-                return 0xFFD69E49;
-            }
-
-            @Override
-            public int getTintColor(FluidStack stack) {
-                return 0xFFD69E49;
-            }
-        }, PropulsionFluids.TURPENTINE_TYPE);
-
-        event.registerFluidType(new IClientFluidTypeExtensions() {
-            @Override
-            public ResourceLocation getStillTexture() {
-                return ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/coral_still");
-            }
-
-            @Override
-            public ResourceLocation getFlowingTexture() {
-                return ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/coral_flow");
-            }
-
-            @Override
-            public int getTintColor() {
-                return 0xFFFFFFFF;
-            }
-
-            @Override
-            public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
-                return 0xFFFFFFFF;
-            }
-
-            @Override
-            public int getTintColor(FluidStack stack) {
-                return 0xFFFFFFFF;
-            }
-        }, PropulsionFluids.CORAL_TYPE);
-
-        event.registerFluidType(new IClientFluidTypeExtensions() {
-            @Override
-            public ResourceLocation getStillTexture() {
-                return ResourceLocation.parse("minecraft:block/water_still");
-            }
-
-            @Override
-            public ResourceLocation getFlowingTexture() {
-                return ResourceLocation.parse("minecraft:block/water_flow");
-            }
-
-            @Override
-            public int getTintColor() {
-                return 0xFF88CCFF;
-            }
-
-            @Override
-            public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
-                return 0xFF88CCFF;
-            }
-
-            @Override
-            public int getTintColor(FluidStack stack) {
-                return 0xFF88CCFF;
-            }
-        }, PropulsionFluids.OXIDIZER_TYPE);
     }
 
     @SubscribeEvent

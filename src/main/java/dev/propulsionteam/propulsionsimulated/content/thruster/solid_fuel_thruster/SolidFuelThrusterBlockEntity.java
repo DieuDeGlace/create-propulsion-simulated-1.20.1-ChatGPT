@@ -21,11 +21,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.List;
 
@@ -143,11 +143,8 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
         }
         Direction inputSide = getFuelInputSide();
         BlockPos behind = worldPosition.relative(inputSide);
-        IItemHandler source = level.getCapability(
-                Capabilities.ItemHandler.BLOCK,
-                behind,
-                inputSide.getOpposite()
-        );
+        IItemHandler source = dev.propulsionteam.propulsionsimulated.utility.ForgeCapabilityUtils
+            .getBlockCapability(level, behind, ForgeCapabilities.ITEM_HANDLER, inputSide.getOpposite());
         if (source == null) {
             return;
         }
@@ -446,19 +443,19 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
     }
 
     @Override
-    protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound,  boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putInt("BurnTime", burnTime);
         compound.putInt("TotalBurnTicks", totalBurnTicks);
         compound.putDouble("BurnDrainAccumulator", burnDrainAccumulator);
         compound.putBoolean("SuperHeated", superHeated);
         compound.putBoolean("HatchOpen", hatchOpen);
-        compound.put("Inventory", inventory.serializeNBT(registries));
+        compound.put("Inventory", inventory.serializeNBT());
     }
 
     @Override
-    protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
         burnTime = compound.getInt("BurnTime");
         totalBurnTicks = compound.contains("TotalBurnTicks")
                 ? compound.getInt("TotalBurnTicks")
@@ -472,23 +469,23 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
                 ListTag items = inventoryTag.getList("Items", Tag.TAG_COMPOUND);
                 ItemStack merged = ItemStack.EMPTY;
                 if (items.size() > 1) {
-                    ItemStack burning = ItemStack.parse(registries, items.getCompound(1)).orElse(ItemStack.EMPTY);
-                    ItemStack queued = ItemStack.parse(registries, items.getCompound(0)).orElse(ItemStack.EMPTY);
+                    ItemStack burning = ItemStack.of(items.getCompound(1));
+                    ItemStack queued = ItemStack.of(items.getCompound(0));
                     merged = !burning.isEmpty() ? burning.copyWithCount(1) : queued.copyWithCount(1);
                 } else if (!items.isEmpty()) {
-                    merged = ItemStack.parse(registries, items.getCompound(0)).orElse(ItemStack.EMPTY);
+                    merged = ItemStack.of(items.getCompound(0));
                 }
                 setFuelStack(merged);
             } else {
-                inventory.deserializeNBT(registries, inventoryTag);
+                inventory.deserializeNBT(inventoryTag);
             }
         } else {
             ItemStack legacy = ItemStack.EMPTY;
             if (compound.contains("BurningFuel")) {
-                legacy = ItemStack.parse(registries, compound.getCompound("BurningFuel")).orElse(ItemStack.EMPTY);
+                legacy = ItemStack.of(compound.getCompound("BurningFuel"));
             }
             if (legacy.isEmpty() && compound.contains("QueuedFuel")) {
-                legacy = ItemStack.parse(registries, compound.getCompound("QueuedFuel")).orElse(ItemStack.EMPTY);
+                legacy = ItemStack.of(compound.getCompound("QueuedFuel"));
             }
             setFuelStack(legacy);
         }

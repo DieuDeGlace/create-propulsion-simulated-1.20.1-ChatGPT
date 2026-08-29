@@ -98,7 +98,7 @@ public class ThrusterDamager extends AbstractAreaDamagerBehaviour {
         float invSqrDistance = (context.visualPowerPercent() * 15.0f) * 8.0f / (float)java.lang.Math.max(1, entity.position().distanceToSqr(context.nozzlePos()));
         float damageAmount = 3 + invSqrDistance;
 
-        entity.igniteForSeconds(3);
+        entity.setSecondsOnFire(3);
         entity.hurt(source, damageAmount);
     }
 
@@ -120,7 +120,7 @@ public class ThrusterDamager extends AbstractAreaDamagerBehaviour {
             endPos,
             net.minecraft.world.level.ClipContext.Block.COLLIDER,
             net.minecraft.world.level.ClipContext.Fluid.NONE,
-            net.minecraft.world.phys.shapes.CollisionContext.empty()
+            null
         );
 
         net.minecraft.world.phys.BlockHitResult hitResult = level.clip(clipContext);

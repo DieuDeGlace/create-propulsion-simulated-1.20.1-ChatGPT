@@ -10,7 +10,7 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.Liquid
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -50,14 +50,16 @@ public abstract class AbstractBurnerBlock extends HorizontalDirectionalBlock imp
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        return this.onBlockEntityUseItemOn(level, pos, be -> {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack stack = player.getItemInHand(hand);
+        return this.onBlockEntityUse(level, pos, be -> {
             if (be instanceof LiquidBurnerBlockEntity liquid) {
                 if (liquid.tryConsumeFuelBucket(player, hand, stack)) {
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide());
+                    return InteractionResult.sidedSuccess(level.isClientSide());
                 }
             }
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         });
     }
 

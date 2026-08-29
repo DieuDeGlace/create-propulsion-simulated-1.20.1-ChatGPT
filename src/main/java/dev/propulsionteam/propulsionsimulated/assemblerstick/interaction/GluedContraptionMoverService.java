@@ -9,7 +9,6 @@ import dev.simulated_team.simulated.content.entities.honey_glue.HoneyGlueEntity;
 import dev.simulated_team.simulated.service.SimConfigService;
 import dev.propulsionteam.propulsionsimulated.assemblerstick.item.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -19,7 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -403,21 +401,17 @@ public final class GluedContraptionMoverService {
         root.put(SOURCE_SUPER_GLUE, writeGlueSnapshots(sourceSuperGlue));
         root.put(SOURCE_HONEY_GLUE, writeGlueSnapshots(sourceHoneyGlue));
 
-        final CompoundTag custom = new CompoundTag();
-        custom.put(ROOT_TAG, root);
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(custom));
+        // 1.20.1 stores custom item data directly in the stack tag. Add only
+        // our namespaced root so Create's schematic owner/file fields survive.
+        stack.getOrCreateTag().put(ROOT_TAG, root);
     }
 
     private static CompoundTag readMoverData(final ItemStack stack) {
-        final CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-        if (customData == null) {
+        final CompoundTag tag = stack.getTag();
+        if (tag == null || !tag.contains(ROOT_TAG, Tag.TAG_COMPOUND)) {
             return null;
         }
-        final CompoundTag copied = customData.copyTag();
-        if (!copied.contains(ROOT_TAG, Tag.TAG_COMPOUND)) {
-            return null;
-        }
-        return copied.getCompound(ROOT_TAG);
+        return tag.getCompound(ROOT_TAG);
     }
 
     private static Set<BlockPos> readSourceBlocks(final CompoundTag root) {
@@ -569,15 +563,11 @@ public final class GluedContraptionMoverService {
         if (stack.isEmpty() || !(stack.getItem() instanceof SchematicItem)) {
             return false;
         }
-        final CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-        if (customData == null) {
+        final CompoundTag tag = stack.getTag();
+        if (tag == null || !tag.contains(ROOT_TAG, Tag.TAG_COMPOUND)) {
             return false;
         }
-        final CompoundTag copied = customData.copyTag();
-        if (!copied.contains(ROOT_TAG, Tag.TAG_COMPOUND)) {
-            return false;
-        }
-        return sessionId.equals(copied.getCompound(ROOT_TAG).getString(SESSION_ID));
+        return sessionId.equals(tag.getCompound(ROOT_TAG).getString(SESSION_ID));
     }
 
     private static boolean cleanupSchematicFile(final CompoundTag moverData) {

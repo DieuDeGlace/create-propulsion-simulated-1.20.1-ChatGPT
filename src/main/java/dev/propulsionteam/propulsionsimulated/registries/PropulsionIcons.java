@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public class PropulsionIcons extends AllIcons {
-    public static final ResourceLocation ICON_ATLAS = ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "textures/gui/icons.png");
+    public static final ResourceLocation ICON_ATLAS = new ResourceLocation(CreatePropulsion.ID, "textures/gui/icons.png");
     public static final int ICON_ATLAS_SIZE = 32;
 
     protected int iconX;
@@ -65,9 +65,10 @@ public class PropulsionIcons extends AllIcons {
     }
 
     private void vertex(VertexConsumer builder, Matrix4f matrix, Vec3 vec, Color rgb, float u, float v, int light) {
-        builder.addVertex(matrix, (float) vec.x, (float) vec.y, (float) vec.z)
-                .setColor(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 255)
-                .setUv(u, v)
-                .setLight(light);
+        builder.vertex(matrix, (float) vec.x, (float) vec.y, (float) vec.z)
+                .color(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 255)
+                .uv(u, v)
+                .uv2(light)
+                .endVertex();
     }
 }

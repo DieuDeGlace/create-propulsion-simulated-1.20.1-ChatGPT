@@ -23,7 +23,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 
 import com.google.gson.JsonElement;
 

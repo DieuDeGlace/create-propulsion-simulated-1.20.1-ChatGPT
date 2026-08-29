@@ -181,9 +181,10 @@ public final class AdaptivePlumeTrailRenderer {
 
     private static void vertex(VertexConsumer consumer, Matrix4f matrix, Vec3 p, float u, float v,
                                float r, float g, float b, int alpha) {
-        consumer.addVertex(matrix, (float) p.x, (float) p.y, (float) p.z)
-                .setUv(u, v * 0.2f)
-                .setColor((int) (r * 255), (int) (g * 255), (int) (b * 255), alpha);
+        consumer.vertex(matrix, (float) p.x, (float) p.y, (float) p.z)
+                .uv(u, v * 0.2f)
+                .color((int) (r * 255), (int) (g * 255), (int) (b * 255), alpha)
+                .endVertex();
     }
 
     private static Vec3 toRenderLocal(AbstractThrusterBlockEntity be, Vec3 world) {

@@ -63,12 +63,12 @@ public class CoralGeneratorBlock extends Block implements IBE<CoralGeneratorBloc
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return PropulsionShapes.CORAL_GENERATOR.get(state.getValue(FACING));
     }
 
     @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return PropulsionShapes.CORAL_GENERATOR.get(state.getValue(FACING));
     }
 

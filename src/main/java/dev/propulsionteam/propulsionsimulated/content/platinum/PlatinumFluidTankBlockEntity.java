@@ -4,11 +4,10 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 public class PlatinumFluidTankBlockEntity extends FluidTankBlockEntity {
     public PlatinumFluidTankBlockEntity(BlockPos pos, BlockState state) {
@@ -36,7 +35,7 @@ public class PlatinumFluidTankBlockEntity extends FluidTankBlockEntity {
     }
 
     public IFluidHandler getCapabilityHandler() {
-        return fluidCapability;
+        return fluidCapability.orElse(null);
     }
 
     @Override
@@ -46,14 +45,14 @@ public class PlatinumFluidTankBlockEntity extends FluidTankBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
         if (!isController()) {
             return;
         }
         tankInventory.setCapacity(getTotalTankSize() * getCapacityMultiplier() * 2);
         if (compound.contains("TankContent")) {
-            tankInventory.readFromNBT(registries, compound.getCompound("TankContent"));
+            tankInventory.readFromNBT(compound.getCompound("TankContent"));
             if (tankInventory.getSpace() < 0) {
                 tankInventory.drain(-tankInventory.getSpace(), FluidAction.EXECUTE);
             }

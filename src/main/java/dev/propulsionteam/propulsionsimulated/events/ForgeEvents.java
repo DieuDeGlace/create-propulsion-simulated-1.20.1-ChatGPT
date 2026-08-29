@@ -27,21 +27,21 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraft.world.phys.Vec3;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.FORGE)
 public class ForgeEvents {
     private static final ResourceKey<DamageType> CORAL_SUBMERSION_DAMAGE_TYPE = ResourceKey.create(
         Registries.DAMAGE_TYPE,
-        ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "coral_submersion")
+        new ResourceLocation(CreatePropulsion.ID, "coral_submersion")
     );
     private static final int CORAL_DAMAGE_INTERVAL_TICKS = 20;
     private static final float CORAL_DAMAGE_AMOUNT = 8.0f;
@@ -63,7 +63,10 @@ public class ForgeEvents {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
             PropulsionPackets.sendToPlayer(
-                SyncThrusterFuelsPacket.create(ThrusterFuelManager.getFuelPropertiesMap(), ThrusterFuelManager.getRemovedFuelIds()),
+                SyncThrusterFuelsPacket.create(
+                    ThrusterFuelManager.getFuelPropertiesMap(),
+                    ThrusterFuelManager.getRemovedFuelIds(),
+                    ThrusterFuelManager.getEfficiencyOverrides()),
                 serverPlayer
             );
             PropulsionPackets.sendToPlayer(
@@ -74,12 +77,15 @@ public class ForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity().level() instanceof ServerLevel serverLevel)) {
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        if (!(event.player.level() instanceof ServerLevel serverLevel)) {
             return;
         }
 
-        Player player = event.getEntity();
+        Player player = event.player;
         if (player.tickCount % CORAL_DAMAGE_INTERVAL_TICKS != 0) {
             return;
         }

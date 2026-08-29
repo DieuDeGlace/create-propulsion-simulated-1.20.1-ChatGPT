@@ -7,11 +7,11 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 
 public class ProtectedFlowingFluid {
 
-    public static class Source extends BaseFlowingFluid.Source {
+    public static class Source extends ForgeFlowingFluid.Source {
         public Source(Properties properties) {
             super(properties);
         }
@@ -26,7 +26,7 @@ public class ProtectedFlowingFluid {
         }
     }
 
-    public static class Flowing extends BaseFlowingFluid.Flowing {
+    public static class Flowing extends ForgeFlowingFluid.Flowing {
         public Flowing(Properties properties) {
             super(properties);
         }

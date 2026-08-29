@@ -12,13 +12,12 @@ import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class CoralGeneratorBlockEntity extends SmartBlockEntity {
     public static final int ENERGY_CAPACITY = 1_000_000;
@@ -122,7 +121,8 @@ public class CoralGeneratorBlockEntity extends SmartBlockEntity {
                 break;
             }
             BlockPos neighborPos = worldPosition.relative(direction);
-            IEnergyStorage target = level.getCapability(Capabilities.EnergyStorage.BLOCK, neighborPos, direction.getOpposite());
+            IEnergyStorage target = dev.propulsionteam.propulsionsimulated.utility.ForgeCapabilityUtils
+                .getBlockCapability(level, neighborPos, ForgeCapabilities.ENERGY, direction.getOpposite());
             if (target == null || !target.canReceive()) {
                 continue;
             }
@@ -201,14 +201,14 @@ public class CoralGeneratorBlockEntity extends SmartBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void write(CompoundTag tag,  boolean clientPacket) {
         tag.putInt("EnergyStored", energyStored);
-        super.write(tag, registries, clientPacket);
+        super.write(tag, clientPacket);
     }
 
     @Override
-    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void read(CompoundTag tag,  boolean clientPacket) {
         energyStored = Math.max(0, Math.min(ENERGY_CAPACITY, tag.getInt("EnergyStored")));
-        super.read(tag, registries, clientPacket);
+        super.read(tag, clientPacket);
     }
 }

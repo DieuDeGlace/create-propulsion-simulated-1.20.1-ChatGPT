@@ -21,13 +21,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.ChunkRenderTypeSet;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.minecraftforge.client.ChunkRenderTypeSet;
+import net.minecraftforge.client.model.data.ModelData;
 
 public class CopycatWingModel extends CopycatModel {
     private final int width;
     private static final float PIXELS_PER_BLOCK = 16.0f;
-    private static final ResourceLocation COPYCAT_BASE_ID = ResourceLocation.fromNamespaceAndPath("create", "copycat_base");
+    private static final ResourceLocation COPYCAT_BASE_ID = new ResourceLocation("create", "copycat_base");
 
     public CopycatWingModel(BakedModel originalModel, int width) {
         super(originalModel);

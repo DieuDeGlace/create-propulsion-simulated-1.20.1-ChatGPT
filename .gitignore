@@ -16,12 +16,20 @@ out
 # gradle
 build
 .gradle
+.gradle-user/
 
 # other
 .vscode
 .claude
 eclipse
 run
+dist
+release
+logs
+libs/*.jar
+!libs/.gitkeep
+compileOnlyLibs/*.jar
+!compileOnlyLibs/.gitkeep
 
 # Files from Forge MDK
 forge*changelog.txt

@@ -12,14 +12,14 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = CreatePropulsion.ID, bus = Bus.MOD, value = Dist.CLIENT)
@@ -67,7 +67,7 @@ public enum ParticleTypes {
         private static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(Registries.PARTICLE_TYPE, CreatePropulsion.ID);
         private final String name;
         private final Supplier<? extends ICustomParticleData<D>> typeFactory;
-        private final DeferredHolder<ParticleType<?>, ParticleType<D>> object;
+        private final RegistryObject<ParticleType<D>> object;
 
         public ParticleEntry(String name, Supplier<? extends ICustomParticleData<D>> typeFactory) {
             this.name = name; this.typeFactory = typeFactory;

@@ -1,6 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
 
-import com.mojang.serialization.MapCodec;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterShapes;
@@ -16,15 +15,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.block.DirectionalBlock;
 
 public class VectorThrusterBlock extends IonThrusterBlock {
-    public static final MapCodec<VectorThrusterBlock> CODEC = simpleCodec(VectorThrusterBlock::new);
 
     public VectorThrusterBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -39,7 +32,7 @@ public class VectorThrusterBlock extends IonThrusterBlock {
     }
 
     @Override
-    protected VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
+    public VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.block();
     }
 

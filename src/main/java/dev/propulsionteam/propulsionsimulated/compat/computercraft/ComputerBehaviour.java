@@ -23,9 +23,12 @@ import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.shared.Capabilities;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 
 public class ComputerBehaviour extends AbstractComputerBehaviour {
-    protected IPeripheral peripheral;
+    protected LazyOptional<IPeripheral> peripheral;
     protected Supplier<IPeripheral> peripheralSupplier;
 
     private static final Map<Class<? extends SmartBlockEntity>, Function<SmartBlockEntity, IPeripheral>> PERIPHERAL_FACTORIES = new HashMap<>();
@@ -88,14 +91,22 @@ public class ComputerBehaviour extends AbstractComputerBehaviour {
     }
 
     @Override
-    public IPeripheral getPeripheralCapability() {
-        if (peripheral == null)
-            peripheral = peripheralSupplier.get();
-        return peripheral;
+    public <T> boolean isPeripheralCap(Capability<T> capability) {
+        return capability == Capabilities.CAPABILITY_PERIPHERAL;
+    }
+
+    @Override
+    public <T> LazyOptional<T> getPeripheralCapability() {
+        if (peripheral == null || !peripheral.isPresent()) {
+            peripheral = LazyOptional.of(() -> peripheralSupplier.get());
+        }
+        return peripheral.cast();
     }
 
     @Override
     public void removePeripheral() {
-        peripheral = null;
+        if (peripheral != null) {
+            peripheral.invalidate();
+        }
     }
 }

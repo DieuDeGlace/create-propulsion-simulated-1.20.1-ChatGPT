@@ -8,13 +8,12 @@ import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlock;
 import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.energy.IEnergyStorage;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -75,15 +74,15 @@ public class CableRelayBlockEntity extends SmartBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void write(CompoundTag tag,  boolean clientPacket) {
         tag.putInt("RelayId", relayId);
-        super.write(tag, registries, clientPacket);
+        super.write(tag, clientPacket);
     }
 
     @Override
-    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+    protected void read(CompoundTag tag,  boolean clientPacket) {
         relayId = tag.contains("RelayId") ? Math.max(0, tag.getInt("RelayId")) : -1;
-        super.read(tag, registries, clientPacket);
+        super.read(tag, clientPacket);
     }
 
 }

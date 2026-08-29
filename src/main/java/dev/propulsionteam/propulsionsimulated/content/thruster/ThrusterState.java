@@ -7,11 +7,11 @@ public final class ThrusterState {
     }
 
     public static double throttle(final int redstonePower) {
-        return Math.clamp(redstonePower / 15.0d, 0.0d, 1.0d);
+        return net.minecraft.util.Mth.clamp(redstonePower / 15.0d, 0.0d, 1.0d);
     }
 
     public static double obstructionEfficiency(final int unobstructedBlocks) {
-        final int clamped = Math.clamp(unobstructedBlocks, 0, FULL_EFFICIENCY_AIR_GAP);
+        final int clamped = net.minecraft.util.Mth.clamp(unobstructedBlocks, 0, FULL_EFFICIENCY_AIR_GAP);
         return clamped / (double) FULL_EFFICIENCY_AIR_GAP;
     }
 

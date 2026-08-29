@@ -72,7 +72,7 @@ public final class ThrusterDebugRenderer {
                 worldEnd,
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
-                net.minecraft.world.phys.shapes.CollisionContext.empty()
+                null
         ));
         if (hitResult.getType() == BlockHitResult.Type.BLOCK) {
             DebugRenderer.drawBox(

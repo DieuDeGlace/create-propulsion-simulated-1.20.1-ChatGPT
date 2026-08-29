@@ -5,9 +5,9 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManag
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class PassthroughFluidHandler implements IFluidHandler {
     private final LiquidBurnerBlockEntity blockEntity;
@@ -43,7 +43,8 @@ public class PassthroughFluidHandler implements IFluidHandler {
             if (level != null) {
                 Direction outputSide = inputSide.getOpposite();
                 BlockPos neighborPos = blockEntity.getBlockPos().relative(outputSide);
-                IFluidHandler cap = level.getCapability(Capabilities.FluidHandler.BLOCK, neighborPos, inputSide);
+                IFluidHandler cap = dev.propulsionteam.propulsionsimulated.utility.ForgeCapabilityUtils
+                    .getBlockCapability(level, neighborPos, ForgeCapabilities.FLUID_HANDLER, inputSide);
                 if (cap != null) {
                     int filledIntoNeighbor = cap.fill(remaining, action);
                     totalFilled += filledIntoNeighbor;

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 public class BurnerFuelItemHandler extends ItemStackHandler {
     private final BurnerFuelBehaviour behaviour;
@@ -39,7 +39,7 @@ public class BurnerFuelItemHandler extends ItemStackHandler {
             }
             return stack.copyWithCount(stack.getCount() - amount);
         } else {
-            if (!ItemStack.isSameItemSameComponents(behaviour.fuelStack, stack)) {
+            if (!ItemStack.isSameItemSameTags(behaviour.fuelStack, stack)) {
                 return stack;
             }
             int space = getSlotLimit(slot) - behaviour.fuelStack.getCount();

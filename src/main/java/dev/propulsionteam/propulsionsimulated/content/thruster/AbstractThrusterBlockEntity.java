@@ -36,7 +36,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.joml.Math;
 import org.joml.Vector3d;
 
@@ -224,6 +224,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         boolean startupChanged = updateStartupState();
+        sampleResourceDemandForTick();
         if (!PropulsionConfig.useShaderPlumes()) {
             emitResolvedParticles(level, worldPosition, currentBlockState);
         }
@@ -247,6 +248,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             updateThrustUpdateInterval();
             updateThrust(currentBlockState);
         }
+    }
+
+    protected void sampleResourceDemandForTick() {
     }
 
     private boolean updateStartupState() {
@@ -321,9 +325,16 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             return;
         }
         setChanged();
+        if (!shouldSyncThrustImmediately()) {
+            return;
+        }
         notifyUpdate();
         BlockState state = getBlockState();
         level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
+    }
+
+    protected boolean shouldSyncThrustImmediately() {
+        return true;
     }
 
     public int getEmptyBlocks() {
@@ -575,7 +586,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                 rayEnd,
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
-                net.minecraft.world.phys.shapes.CollisionContext.empty()
+                null
             );
             BlockHitResult hitResult = level.clip(clipContext);
 
@@ -585,7 +596,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                 firstHitDistance = Math.min(scanLength, rayStart.distanceTo(hitResult.getLocation()));
             }
             int emptyBlocksEstimate = hit
-                ? Math.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
+                ? net.minecraft.util.Mth.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
                 : scanLength;
             return new ObstructionRaySample(firstHitDistance, emptyBlocksEstimate);
         }
@@ -603,7 +614,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             rayEnd,
             ClipContext.Block.COLLIDER,
             ClipContext.Fluid.NONE,
-            net.minecraft.world.phys.shapes.CollisionContext.empty()
+            null
         );
         BlockHitResult hitResult = worldRay.level().clip(clipContext);
 
@@ -614,7 +625,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         int emptyBlocksEstimate = hit
-            ? Math.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
+            ? net.minecraft.util.Mth.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
             : scanLength;
         return new ObstructionRaySample(firstHitDistance, emptyBlocksEstimate);
     }
@@ -630,7 +641,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public int getFuelAmountMb() { return 0; }
     public int getFuelCapacityMb() { return 0; }
     public boolean validFluid() { return false; }
-    public net.neoforged.neoforge.fluids.FluidStack fluidStack() { return net.neoforged.neoforge.fluids.FluidStack.EMPTY; }
+    public net.minecraftforge.fluids.FluidStack fluidStack() { return net.minecraftforge.fluids.FluidStack.EMPTY; }
 
     public boolean isActive() {
         return (isPowered() && isWorking()) || isFadingOut();
@@ -682,6 +693,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         // Sample the nozzle every tick, including while idle. This avoids a stale accumulated
         // displacement when a moving thruster is switched back on.
         Vec3 localNozzlePosition = getParticleDebugNozzlePositionLocal();
+        var particleSubLevel = Sable.HELPER.getContaining(level, localNozzlePosition);
         Vec3 worldNozzlePosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition);
         Vec3 finiteDifferenceVelocity = previousParticleNozzleWorld == null
             ? Vec3.ZERO
@@ -725,9 +737,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
         float emissionScale = (float) Math.max(power, MathUtility.epsilon);
 
-        // The particle implementation applies its own speed multiplier and drag to this
-        // exhaust component. Nozzle motion is carried separately in the particle data so it
-        // remains in world units and the moving craft cannot overtake the plume.
         Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
             .mul(getParticleVelocity() * emissionScale * particleVelocityMultiplier * multiblockVelocityScale);
 
@@ -767,17 +776,28 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             samplePosition = samplePosition.add(sampleVelocity.scale(sampleAge))
                     .add(sampleDirection.scale(visualExhaustStep * sampleAge));
 
-            ParticleOptions particleData = withMotion(baseParticleData, sampleVelocity, adaptiveTrailCoverage);
-            Vector3d sampleParticleVelocity = new Vector3d(sampleDirection.x, sampleDirection.y, sampleDirection.z)
+            Vec3 broadcastPosition = samplePosition;
+            Vec3 spawnPosition = samplePosition;
+            Vec3 spawnDirection = sampleDirection;
+            Vec3 inheritedVelocity = sampleVelocity;
+
+            if (particleSubLevel != null) {
+                spawnPosition = particleSubLevel.logicalPose().transformPositionInverse(samplePosition);
+                spawnDirection = particleSubLevel.logicalPose().transformNormalInverse(sampleDirection).normalize();
+                inheritedVelocity = Vec3.ZERO;
+            }
+
+            ParticleOptions particleData = withMotion(baseParticleData, inheritedVelocity, adaptiveTrailCoverage);
+            Vector3d sampleParticleVelocity = new Vector3d(spawnDirection.x, spawnDirection.y, spawnDirection.z)
                     .mul(speedPerTick);
-            double spawnX = samplePosition.x;
-            double spawnY = samplePosition.y;
-            double spawnZ = samplePosition.z;
+            double spawnX = spawnPosition.x;
+            double spawnY = spawnPosition.y;
+            double spawnZ = spawnPosition.z;
 
             if (level instanceof ServerLevel serverLevel) {
                 double maxDistSq = getParticleBroadcastRange() * getParticleBroadcastRange();
                 for (ServerPlayer player : serverLevel.players()) {
-                    if (player.distanceToSqr(spawnX, spawnY, spawnZ) > maxDistSq) {
+                    if (player.distanceToSqr(broadcastPosition.x, broadcastPosition.y, broadcastPosition.z) > maxDistSq) {
                         continue;
                     }
                     serverLevel.sendParticles(
@@ -938,8 +958,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
 
     @Override
-    protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound,  boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putInt("emptyBlocks", emptyBlocks);
         compound.putInt("currentTick", currentTick);
         compound.putInt("StartupTicks", startupTicks);
@@ -959,11 +979,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     @Override
-    protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
         emptyBlocks = compound.getInt("emptyBlocks");
         currentTick = compound.getInt("currentTick");
-        startupTicks = Math.clamp(compound.getInt("StartupTicks"), 0, STARTUP_DURATION_TICKS);
+        startupTicks = net.minecraft.util.Mth.clamp(compound.getInt("StartupTicks"), 0, STARTUP_DURATION_TICKS);
         wasOperational = compound.getBoolean("StartupOperational");
         fadePower = org.joml.Math.clamp(0.0f, 1.0f, compound.getFloat("StartupFadePower"));
         lastThrustUpdateGameTime = -1L;

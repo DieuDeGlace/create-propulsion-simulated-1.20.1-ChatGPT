@@ -6,7 +6,6 @@ import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -121,8 +120,8 @@ public class AdvancedTiltAdapterBlockEntity extends TiltAdapterBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound,  boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putInt("LeftAngle", leftAngleLimit);
         compound.putInt("RightAngle", rightAngleLimit);
         compound.putBoolean("SharedAngles", sharedAngles);
@@ -130,8 +129,8 @@ public class AdvancedTiltAdapterBlockEntity extends TiltAdapterBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
         leftAngleLimit = AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(
             compound.contains("LeftAngle") ? compound.getInt("LeftAngle") : DEFAULT_ANGLE_LIMIT);
         rightAngleLimit = AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(

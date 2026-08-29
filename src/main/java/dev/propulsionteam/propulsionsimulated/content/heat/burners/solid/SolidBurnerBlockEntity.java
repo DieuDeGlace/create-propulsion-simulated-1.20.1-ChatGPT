@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.Clearable;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class SolidBurnerBlockEntity extends AbstractBurnerBlockEntity implements IBurner,Clearable {
     private BurnerFuelBehaviour fuelInventory;
@@ -127,14 +127,14 @@ public class SolidBurnerBlockEntity extends AbstractBurnerBlockEntity implements
     }
 
     @Override
-    protected void write(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    protected void write(CompoundTag tag,  boolean clientPacket) {
+        super.write(tag, clientPacket);
         tag.putInt("burnTime", burnTime);
     }
 
     @Override
-    protected void read(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
+    protected void read(CompoundTag tag,  boolean clientPacket) {
+        super.read(tag, clientPacket);
         burnTime = tag.getInt("burnTime");
     }
     

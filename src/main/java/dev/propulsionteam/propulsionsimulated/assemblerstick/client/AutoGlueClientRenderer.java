@@ -16,13 +16,14 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -34,7 +35,10 @@ public final class AutoGlueClientRenderer {
     }
 
     @SubscribeEvent
-    public static void onClientTick(final ClientTickEvent.Post event) {
+    public static void onClientTick(final TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         final Minecraft mc = Minecraft.getInstance();
         final LocalPlayer player = mc.player;
         final Level level = mc.level;
@@ -73,7 +77,8 @@ public final class AutoGlueClientRenderer {
 
     private static @Nullable HoveredGlue findHoveredGlue(final LocalPlayer player, final List<HoneyGlueEntity> honeyGlues) {
         final Vec3 baseOrigin = player.getEyePosition();
-        final Vec3 baseTarget = RaycastHelper.getTraceTarget(player, player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) * 5, baseOrigin);
+        final Vec3 baseTarget = RaycastHelper.getTraceTarget(
+            player, player.getAttributeValue(ForgeMod.BLOCK_REACH.get()) * 5, baseOrigin);
 
         HoneyGlueEntity closestGlue = null;
         Direction closestDir = null;

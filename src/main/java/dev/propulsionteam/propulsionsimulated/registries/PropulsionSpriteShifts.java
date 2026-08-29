@@ -21,8 +21,8 @@ public class PropulsionSpriteShifts {
 
     private static CTSpriteShiftEntry getCT(CTType type, String blockTextureName) {
         return CTSpriteShifter.getCT(type,
-            ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/" + blockTextureName),
-            ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/" + blockTextureName + "_connected")
+            new ResourceLocation(CreatePropulsion.ID, "block/" + blockTextureName),
+            new ResourceLocation(CreatePropulsion.ID, "block/" + blockTextureName + "_connected")
         );
     }
 }

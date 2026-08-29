@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
-import com.mojang.serialization.MapCodec;
 
 import dev.ryanhcode.sable.api.block.BlockSubLevelCustomCenterOfMass;
 import dev.ryanhcode.sable.api.block.BlockSubLevelLiftProvider;
@@ -18,7 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +33,6 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 public class WingBlock extends DirectionalBlock implements BlockSubLevelLiftProvider, BlockSubLevelCustomCenterOfMass {
-    public static final MapCodec<WingBlock> CODEC = simpleCodec(WingBlock::new);
     private static final Vector3dc CENTER_OF_MASS = new Vector3d(0.5, 0.5, 0.5);
     private static final List<Supplier<? extends net.minecraft.world.level.block.Block>> entires =
         List.of(PropulsionBlocks.COPYCAT_WING, PropulsionBlocks.COPYCAT_WING_8, PropulsionBlocks.COPYCAT_WING_12,
@@ -49,41 +46,34 @@ public class WingBlock extends DirectionalBlock implements BlockSubLevelLiftProv
     }
 
     @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
-    }
-
-    @Override
     public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
         return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult ray) {
+    public InteractionResult use(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos,
+                                 @Nonnull Player player, @Nonnull InteractionHand hand,
+                                 @Nonnull BlockHitResult ray) {
+        ItemStack stack = player.getItemInHand(hand);
         if (player == null || player.isShiftKeyDown() || !player.mayBuild()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
 
         IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
         if (!placementHelper.matchesItem(stack) || !(stack.getItem() instanceof BlockItem blockItem)) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
 
         var offset = placementHelper.getOffset(player, world, state, pos, ray);
         if (!offset.isSuccessful()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
 
         if (world.isClientSide) {
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         return offset.placeInWorld(world, blockItem, player, hand, ray);
-    }
-
-	public InteractionResult use(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult ray) {
-        // Placement with an item is handled in useItemOn() to support Create's helper arrows.
-        return InteractionResult.PASS;
     }
 
     @Override

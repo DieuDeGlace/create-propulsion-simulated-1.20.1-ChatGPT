@@ -1,6 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.redstone_converter;
 
-import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.redstone.diodes.AbstractDiodeBlock;
 import com.simibubi.create.foundation.block.IBE;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
@@ -22,7 +21,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector3f;
 
 public class RedstoneConverterBlock extends AbstractDiodeBlock implements IBE<RedstoneConverterBlockEntity> {
-    public static final MapCodec<RedstoneConverterBlock> CODEC = simpleCodec(RedstoneConverterBlock::new);
 
     private static final VoxelShape SHAPE = Shapes.or(
         Block.box(0, 0, 0, 16, 2, 16),
@@ -32,11 +30,6 @@ public class RedstoneConverterBlock extends AbstractDiodeBlock implements IBE<Re
     public RedstoneConverterBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(POWERED, false));
-    }
-
-    @Override
-    protected MapCodec<? extends DiodeBlock> codec() {
-        return CODEC;
     }
 
     @Override

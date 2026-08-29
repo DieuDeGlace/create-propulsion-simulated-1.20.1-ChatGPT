@@ -180,15 +180,15 @@ public abstract class AbstractBurnerBlockEntity extends SmartBlockEntity impleme
     //NBT
 
     @Override
-    protected void write(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    protected void write(CompoundTag tag,  boolean clientPacket) {
+        super.write(tag, clientPacket);
         tag.putString("heatLevelName", heatLevelName.name());
         tag.putBoolean("isPowered", isPowered);
     }
 
     @Override
-    protected void read(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(tag, registries, clientPacket);
+    protected void read(CompoundTag tag,  boolean clientPacket) {
+        super.read(tag, clientPacket);
         if (tag.contains("heatLevelName"))
             heatLevelName = HeatLevelString.valueOf(tag.getString("heatLevelName"));
         isPowered = tag.getBoolean("isPowered");

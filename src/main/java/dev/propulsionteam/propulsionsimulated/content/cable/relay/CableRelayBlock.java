@@ -45,7 +45,7 @@ public class CableRelayBlock extends Block implements IBE<CableRelayBlockEntity>
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (level.isClientSide || clusterUpdateInProgress) return;
         level.scheduleTick(pos, this, 1);
     }
@@ -72,7 +72,7 @@ public class CableRelayBlock extends Block implements IBE<CableRelayBlockEntity>
     }
 
     @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         updateCluster(level, pos);
     }
 

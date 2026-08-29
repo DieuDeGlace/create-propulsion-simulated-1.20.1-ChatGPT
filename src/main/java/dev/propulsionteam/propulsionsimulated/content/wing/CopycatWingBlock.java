@@ -25,7 +25,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -96,26 +95,23 @@ public class CopycatWingBlock extends CopycatBlock implements BlockSubLevelLiftP
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult ray) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult ray) {
+        ItemStack stack = player.getItemInHand(hand);
         if (player != null && !player.isShiftKeyDown() && player.mayBuild()) {
             IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
             if (placementHelper.matchesItem(stack) && stack.getItem() instanceof BlockItem blockItem) {
                 var offset = placementHelper.getOffset(player, world, state, pos, ray);
                 if (offset.isSuccessful()) {
                     if (world.isClientSide) {
-                        return ItemInteractionResult.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
                     return offset.placeInWorld(world, blockItem, player, hand, ray);
                 }
             }
         }
 
-        return super.useItemOn(stack, state, world, pos, player, hand, ray);
-    }
-
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult ray) {
-        // Placement with an item is handled in useItemOn() to support Create's helper arrows.
-        return InteractionResult.PASS;
+        return super.use(state, world, pos, player, hand, ray);
     }
     
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {

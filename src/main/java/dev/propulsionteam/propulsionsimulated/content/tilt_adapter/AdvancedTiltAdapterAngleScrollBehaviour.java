@@ -9,7 +9,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -49,12 +48,12 @@ public class AdvancedTiltAdapterAngleScrollBehaviour extends ScrollValueBehaviou
     }
 
     @Override
-    public void write(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
+    public void write(CompoundTag nbt,  boolean clientPacket) {
         nbt.putInt(nbtKey(), value);
     }
 
     @Override
-    public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
+    public void read(CompoundTag nbt,  boolean clientPacket) {
         if (nbt.contains(nbtKey())) {
             setStoredValue(nbt.getInt(nbtKey()));
         }

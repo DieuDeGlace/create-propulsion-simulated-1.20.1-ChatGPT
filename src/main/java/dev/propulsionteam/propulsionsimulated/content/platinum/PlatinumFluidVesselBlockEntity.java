@@ -11,19 +11,19 @@ import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -334,8 +334,9 @@ public class PlatinumFluidVesselBlockEntity extends FluidTankBlockEntity impleme
     }
 
     protected void refreshCapability() {
-        fluidCapability = handlerForCapability();
-        invalidateCapabilities();
+        LazyOptional<IFluidHandler> previous = fluidCapability;
+        fluidCapability = LazyOptional.of(this::handlerForCapability);
+        previous.invalidate();
     }
 
     protected IFluidHandler handlerForCapability() {
@@ -345,7 +346,7 @@ public class PlatinumFluidVesselBlockEntity extends FluidTankBlockEntity impleme
     }
 
     public IFluidHandler getCapabilityHandler() {
-        return fluidCapability;
+        return fluidCapability.orElse(null);
     }
 
     @Override
@@ -386,12 +387,12 @@ public class PlatinumFluidVesselBlockEntity extends FluidTankBlockEntity impleme
             return true;
         }
         return containedFluidTooltip(tooltip, isPlayerSneaking,
-            level.getCapability(Capabilities.FluidHandler.BLOCK, controllerBE.getBlockPos(), null));
+            controllerBE.getCapability(ForgeCapabilities.FLUID_HANDLER));
     }
 
     @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
 
         BlockPos controllerBefore = controller;
         int prevWidth = width;
@@ -403,12 +404,12 @@ public class PlatinumFluidVesselBlockEntity extends FluidTankBlockEntity impleme
 
         lastKnownPos = null;
         if (compound.contains("LastKnownPos")) {
-            lastKnownPos = NBTHelper.readBlockPos(compound, "LastKnownPos");
+            lastKnownPos = NbtUtils.readBlockPos(compound.getCompound("LastKnownPos"));
         }
 
         controller = null;
         if (compound.contains("Controller")) {
-            controller = NBTHelper.readBlockPos(compound, "Controller");
+            controller = NbtUtils.readBlockPos(compound.getCompound("Controller"));
         }
 
         if (isController()) {
@@ -418,7 +419,7 @@ public class PlatinumFluidVesselBlockEntity extends FluidTankBlockEntity impleme
             height = compound.getInt("Height");
             tankInventory.setCapacity(getTotalTankSize() * getCapacityMultiplier() * 2);
 
-            tankInventory.readFromNBT(registries, compound.getCompound("TankContent"));
+            tankInventory.readFromNBT(compound.getCompound("TankContent"));
             if (tankInventory.getSpace() < 0) {
                 tankInventory.drain(-tankInventory.getSpace(), FluidAction.EXECUTE);
             }
@@ -463,7 +464,7 @@ public class PlatinumFluidVesselBlockEntity extends FluidTankBlockEntity impleme
     }
 
     @Override
-    public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+    public void write(CompoundTag compound,  boolean clientPacket) {
         if (updateConnectivity) {
             compound.putBoolean("Uninitialized", true);
         }
@@ -477,12 +478,12 @@ public class PlatinumFluidVesselBlockEntity extends FluidTankBlockEntity impleme
         if (isController()) {
             compound.putBoolean("Window", window);
             NBTHelper.writeEnum(compound, "WindowType", windowType);
-            compound.put("TankContent", tankInventory.writeToNBT(registries, new CompoundTag()));
+            compound.put("TankContent", tankInventory.writeToNBT(new CompoundTag()));
             compound.putInt("Size", width);
             compound.putInt("Height", height);
         }
         compound.putInt("Luminosity", luminosity);
-        super.write(compound, registries, clientPacket);
+        super.write(compound, clientPacket);
 
         if (!clientPacket) {
             return;
@@ -494,6 +495,14 @@ public class PlatinumFluidVesselBlockEntity extends FluidTankBlockEntity impleme
             compound.putBoolean("LazySync", true);
         }
         forceFluidLevelUpdate = false;
+    }
+
+    @Override
+    public void writeSafe(CompoundTag compound) {
+        super.writeSafe(compound);
+        if (isController()) {
+            NBTHelper.writeEnum(compound, "WindowType", windowType);
+        }
     }
 
     public static int getMaxSize() {

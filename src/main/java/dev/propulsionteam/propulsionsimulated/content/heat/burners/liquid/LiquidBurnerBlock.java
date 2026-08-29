@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import com.mojang.serialization.MapCodec;
 
 // PATCH: implement HorizontalDirectionalBlock.codec() and use horizontal facing property
 
@@ -41,11 +40,6 @@ public class LiquidBurnerBlock extends AbstractBurnerBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-    }
-
-    @Override
-    public MapCodec<LiquidBurnerBlock> codec() {
-        return Block.CODEC.xmap(props -> (LiquidBurnerBlock) this, block -> (LiquidBurnerBlock) block);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.utility;
 
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class MultiFluidHandler implements IFluidHandler {
     private final IFluidHandler handler1;

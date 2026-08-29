@@ -7,13 +7,14 @@ import dev.simulated_team.simulated.index.SimResourceManagers;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import dev.simulated_team.simulated.registrate.simulated_tab.CreativeTabItemTransforms;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,13 +26,13 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class PropulsionCreativeTab {
-    public static final ResourceLocation MAIN_SECTION = ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "propulsion_main");
-    public static final ResourceLocation TOOLS_SECTION = ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "propulsion_tools");
+    public static final ResourceLocation MAIN_SECTION = new ResourceLocation(CreatePropulsion.ID, "propulsion_main");
+    public static final ResourceLocation TOOLS_SECTION = new ResourceLocation(CreatePropulsion.ID, "propulsion_tools");
     public static final List<ResourceLocation> SECTIONS = List.of(MAIN_SECTION, TOOLS_SECTION);
     public static final Map<ResourceLocation, Integer> SECTION_ROWS = new HashMap<>();
 
     private static final DeferredRegister<CreativeModeTab> TABS =
-            DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, CreatePropulsion.ID);
+            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreatePropulsion.ID);
     private static final List<Supplier<Item>> TAB_ITEMS = new ArrayList<>();
 
     public static final CreativeModeTab TAB = CreativeModeTab.builder()
@@ -99,7 +100,7 @@ public class PropulsionCreativeTab {
 
     private static void registerSectionItem(ResourceLocation sectionId, String itemPath, Supplier<Item> itemSupplier) {
         TAB_ITEMS.add(itemSupplier);
-        SimulatedRegistrate.ITEM_TO_SECTION.put(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, itemPath), sectionId);
+        SimulatedRegistrate.ITEM_TO_SECTION.put(new ResourceLocation(CreatePropulsion.ID, itemPath), sectionId);
     }
 
     public static void buildContents(List<ItemStack> displayItems, Set<ItemStack> searchItems) {

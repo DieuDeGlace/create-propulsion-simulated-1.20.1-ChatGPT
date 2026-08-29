@@ -52,7 +52,7 @@ public class PropulsionPartialModels {
     public static final PartialModel TRANSMISSION_MINUS = partial("transmission_minus");
 
     private static PartialModel partial(String path) {
-        return PartialModel.of(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "partial/" + path));
+        return PartialModel.of(new ResourceLocation(CreatePropulsion.ID, "partial/" + path));
     }
 
     public static void register() {}

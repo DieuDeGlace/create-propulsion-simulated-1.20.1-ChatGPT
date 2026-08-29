@@ -1,14 +1,15 @@
 package dev.propulsionteam.propulsionsimulated.particles.smoke;
 
-import com.mojang.serialization.MapCodec;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.foundation.particle.ICustomParticleData;
 import dev.propulsionteam.propulsionsimulated.particles.ParticleTypes;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 
 public record ThrusterSmokeParticleData(
         float scale,
@@ -22,7 +23,7 @@ public record ThrusterSmokeParticleData(
         this(2.5f, 55, 0.24f, 0.24f, 0.27f);
     }
 
-    public static final MapCodec<ThrusterSmokeParticleData> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    public static final Codec<ThrusterSmokeParticleData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             com.mojang.serialization.Codec.FLOAT.fieldOf("scale").forGetter(ThrusterSmokeParticleData::scale),
             com.mojang.serialization.Codec.INT.fieldOf("lifetime").forGetter(ThrusterSmokeParticleData::lifetime),
             com.mojang.serialization.Codec.FLOAT.fieldOf("r").forGetter(ThrusterSmokeParticleData::r),
@@ -30,22 +31,31 @@ public record ThrusterSmokeParticleData(
             com.mojang.serialization.Codec.FLOAT.fieldOf("b").forGetter(ThrusterSmokeParticleData::b)
     ).apply(instance, ThrusterSmokeParticleData::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ThrusterSmokeParticleData> STREAM_CODEC = StreamCodec.of(
-            (buf, data) -> {
-                buf.writeFloat(data.scale());
-                buf.writeVarInt(data.lifetime());
-                buf.writeFloat(data.r());
-                buf.writeFloat(data.g());
-                buf.writeFloat(data.b());
-            },
-            buf -> new ThrusterSmokeParticleData(
-                    buf.readFloat(),
-                    buf.readVarInt(),
-                    buf.readFloat(),
-                    buf.readFloat(),
-                    buf.readFloat()
-            )
-    );
+    public static final ParticleOptions.Deserializer<ThrusterSmokeParticleData> DESERIALIZER =
+            new ParticleOptions.Deserializer<>() {
+                @Override
+                public ThrusterSmokeParticleData fromCommand(ParticleType<ThrusterSmokeParticleData> type,
+                                                              StringReader reader) throws CommandSyntaxException {
+                    reader.expect(' ');
+                    float scale = reader.readFloat();
+                    reader.expect(' ');
+                    int lifetime = reader.readInt();
+                    reader.expect(' ');
+                    float red = reader.readFloat();
+                    reader.expect(' ');
+                    float green = reader.readFloat();
+                    reader.expect(' ');
+                    float blue = reader.readFloat();
+                    return new ThrusterSmokeParticleData(scale, lifetime, red, green, blue);
+                }
+
+                @Override
+                public ThrusterSmokeParticleData fromNetwork(ParticleType<ThrusterSmokeParticleData> type,
+                                                              FriendlyByteBuf buffer) {
+                    return new ThrusterSmokeParticleData(buffer.readFloat(), buffer.readVarInt(),
+                            buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
+                }
+            };
 
     @Override
     public ParticleType<?> getType() {
@@ -53,13 +63,28 @@ public record ThrusterSmokeParticleData(
     }
 
     @Override
-    public MapCodec<ThrusterSmokeParticleData> getCodec(ParticleType<ThrusterSmokeParticleData> type) {
+    public Codec<ThrusterSmokeParticleData> getCodec(ParticleType<ThrusterSmokeParticleData> type) {
         return CODEC;
     }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, ThrusterSmokeParticleData> getStreamCodec() {
-        return STREAM_CODEC;
+    public ParticleOptions.Deserializer<ThrusterSmokeParticleData> getDeserializer() {
+        return DESERIALIZER;
+    }
+
+    @Override
+    public void writeToNetwork(FriendlyByteBuf buffer) {
+        buffer.writeFloat(scale);
+        buffer.writeVarInt(lifetime);
+        buffer.writeFloat(r);
+        buffer.writeFloat(g);
+        buffer.writeFloat(b);
+    }
+
+    @Override
+    public String writeToString() {
+        return String.format(java.util.Locale.ROOT, "%s %.9g %d %.9g %.9g %.9g",
+                ParticleTypes.SMOKE.parameter(), scale, lifetime, r, g, b);
     }
 
     @Override

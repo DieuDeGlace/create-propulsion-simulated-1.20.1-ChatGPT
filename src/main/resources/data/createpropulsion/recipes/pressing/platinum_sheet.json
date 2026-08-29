@@ -1,0 +1,9 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    { "item": "createpropulsion:platinum_ingot" }
+  ],
+  "results": [
+    { "item": "createpropulsion:platinum_sheet" }
+  ]
+}

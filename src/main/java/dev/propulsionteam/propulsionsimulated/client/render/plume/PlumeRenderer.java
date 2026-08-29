@@ -198,14 +198,15 @@ public final class PlumeRenderer {
     }
 
     private static void v(VertexConsumer vc, Matrix4f matrix, float x, float y, float z, float u, float v, int alpha, PlumeRenderParams params) {
-        vc.addVertex(matrix, x, y, z)
-                .setUv(u, v)
-                .setColor(
+        vc.vertex(matrix, x, y, z)
+                .uv(u, v)
+                .color(
                         Mth.clamp((int) (params.red() * 255.0f), 0, 255),
                         Mth.clamp((int) (params.green() * 255.0f), 0, 255),
                         Mth.clamp((int) (params.blue() * 255.0f), 0, 255),
                         alpha
-                );
+                )
+                .endVertex();
     }
 
     private static void set(ShaderInstance shader, String name, float value) {

@@ -6,6 +6,7 @@ import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import dev.propulsionteam.propulsionsimulated.particles.plasma.PlasmaParticleData;
+import dev.propulsionteam.propulsionsimulated.particles.plume.PlumeParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -197,6 +198,29 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
     public boolean isMultiblock() {
         return width > 1;
+    }
+
+    @Override
+    public String getDyeId() {
+        if (!isController() && isMultiblock()) {
+            CreativeThrusterBlockEntity controller = getControllerBE();
+            if (controller != null) {
+                return controller.dyeId;
+            }
+        }
+        return super.getDyeId();
+    }
+
+    @Override
+    public void setDyeId(String id) {
+        if (!isController() && isMultiblock()) {
+            CreativeThrusterBlockEntity controller = getControllerBE();
+            if (controller != null) {
+                controller.setDyeId(id);
+                return;
+            }
+        }
+        super.setDyeId(id);
     }
 
     protected boolean supportsMultiblock() {
@@ -451,13 +475,13 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     protected ParticleOptions createParticleOptions() {
         if (plumeType == PlumeType.PLASMA) {
-            return new PlasmaParticleData();
+            return new PlasmaParticleData(List.of(), getDyeColor());
         }
         if (plumeType == PlumeType.ION) {
-            return new IonParticleData();
+            return new IonParticleData(List.of(), getDyeColor(), null);
         }
         // Default is plume :P
-        return super.createParticleOptions();
+        return new PlumeParticleData(List.of(), getDyeColor());
     }
 
     @Override
@@ -564,9 +588,8 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     // NBT
 
     @Override
-    protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries,
-            boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound, boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putInt("plumeType", plumeType.ordinal());
         compound.putInt("Width", width);
         if (controllerPos != null) {
@@ -580,9 +603,8 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries,
-            boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound, boolean clientPacket) {
+        super.read(compound, clientPacket);
         width = Math.max(1, compound.getInt("Width"));
         if (compound.contains("plumeType")) {
             int idx = compound.getInt("plumeType");

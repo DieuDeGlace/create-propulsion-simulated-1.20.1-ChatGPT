@@ -1,0 +1,19 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "createpropulsion:platinum_ore"
+    }
+  ],
+  "results": [
+    {
+      "item": "create:crushed_raw_platinum"
+    },
+    {
+      "chance": 0.75,
+      "count": 4,
+      "item": "create:experience_nugget"
+    }
+  ],
+  "processingTime": 250
+}

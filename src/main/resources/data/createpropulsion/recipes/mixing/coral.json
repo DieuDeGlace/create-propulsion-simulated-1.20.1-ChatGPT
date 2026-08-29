@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "amount": 500,
+      "fluid": "create:potion",
+      "nbt": {
+        "Bottle": "REGULAR",
+        "Potion": "minecraft:healing"
+      }
+    },
+    { "item": "minecraft:redstone" },
+    { "item": "minecraft:blaze_powder" }
+  ],
+  "results": [
+    {
+      "amount": 500,
+      "fluid": "createpropulsion:coral"
+    }
+  ]
+}

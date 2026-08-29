@@ -6,9 +6,9 @@ import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorFue
 import dev.propulsionteam.propulsionsimulated.content.thruster.SolidThrusterFuelManager;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 @EventBusSubscriber(modid = CreatePropulsion.ID)
 public final class PropulsionModConfigEvents {

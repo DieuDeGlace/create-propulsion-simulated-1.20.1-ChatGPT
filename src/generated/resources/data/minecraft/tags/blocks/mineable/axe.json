@@ -1,7 +1,10 @@
 {
   "values": [
     "createpropulsion:redstone_transmission",
-    "createpropulsion:propeller",
+    {
+      "id": "createpropulsion:propeller",
+      "required": false
+    },
     "createpropulsion:copycat_wing",
     "createpropulsion:copycat_wing_8",
     "createpropulsion:copycat_wing_12"

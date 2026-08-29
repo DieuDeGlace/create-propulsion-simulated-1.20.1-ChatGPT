@@ -3,7 +3,7 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thrus
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 public class SolidFuelThrusterItemHandler extends ItemStackHandler {
     public static final int FUEL_SLOT = 0;

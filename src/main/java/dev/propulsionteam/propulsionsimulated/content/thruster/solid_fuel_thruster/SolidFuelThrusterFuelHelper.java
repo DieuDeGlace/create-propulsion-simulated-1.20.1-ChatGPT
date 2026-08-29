@@ -1,7 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster;
 
-import com.simibubi.create.api.data.datamaps.BlazeBurnerFuel;
-import com.simibubi.create.api.registry.CreateDataMaps;
+import com.simibubi.create.AllTags;
 import dev.propulsionteam.propulsionsimulated.content.thruster.SolidThrusterFuelManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +17,7 @@ public final class SolidFuelThrusterFuelHelper {
     public static final int INFINITE_THRESHOLD = 51_840_000;
 
     private static final ResourceLocation CREATIVE_BLAZE_CAKE =
-        ResourceLocation.fromNamespaceAndPath("create", "creative_blaze_cake");
+        new ResourceLocation("create", "creative_blaze_cake");
 
     private SolidFuelThrusterFuelHelper() {}
 
@@ -44,8 +43,10 @@ public final class SolidFuelThrusterFuelHelper {
         if (stack.isEmpty()) {
             return 0;
         }
-        BlazeBurnerFuel fuel = stack.getItem().builtInRegistryHolder().getData(CreateDataMaps.SUPERHEATED_BLAZE_BURNER_FUELS);
-        return fuel == null ? 0 : fuel.burnTime();
+        // Create 6.0.8 on 1.20.1 models superheated fuel with the special
+        // blaze-burner tag and the same fixed 3,200-tick duration used by the
+        // blaze burner's own fuel resolution path.
+        return AllTags.AllItemTags.BLAZE_BURNER_FUEL_SPECIAL.matches(stack) ? 3_200 : 0;
     }
 
     public static boolean isSuperheatedFuel(ItemStack stack) {

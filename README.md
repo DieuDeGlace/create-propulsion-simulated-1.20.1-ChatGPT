@@ -4,11 +4,13 @@
 
 <h1 align="center">Create Propulsion: Simulated</h1>
 
-> **Forge 1.20.1 port:** active development continues on
-> `port/forge-1.20.1`. The user JAR/source baseline is locked to upstream
-> `cb56760`; platform migration and runtime validation are not complete. See
-> [port status](docs/PORT_STATUS.md), [baseline evidence](docs/UPSTREAM_BASELINE.md)
-> and the [dependency map](docs/DEPENDENCY_MAP.md).
+> **Forge 1.20.1 port:** `1.1.5-port.1` is under final validation on
+> `port/forge-1.20.1`. The source/JAR baseline is locked to upstream
+> `cb56760`. Compilation, automated tests and client/server compatibility
+> smoke tests pass; representative in-world behaviour and final production-JAR
+> persistence tests remain acceptance gates. See [port status](docs/PORT_STATUS.md),
+> [validation evidence](docs/VALIDATION.md), [baseline evidence](docs/UPSTREAM_BASELINE.md)
+> [dependency map](docs/DEPENDENCY_MAP.md) and [release/recovery rules](docs/RELEASE.md).
 
 <p align="center">
   <a href="https://discord.gg/JHcArsDhh4">
@@ -30,7 +32,51 @@
 </p>
 
 ---
-**Create Propulsion: Simulated** is a NeoForge addon for Minecraft 1.21.1 that brings propulsion-focused Create gameplay to the Sable + Create Aeronautics ecosystem.
+
+## Forge 1.20.1 dependencies
+
+The port targets Minecraft 1.20.1, Forge 47.4.0 and Java 17. A normal game
+instance requires these production mods:
+
+- Create 6.0.8 and Flywheel 1.0.5;
+- Veil 1.0.0.296;
+- [Sable 2.0.5-port.1](https://github.com/NotAsher999/sable-1.20.1);
+- [Simulated/Aeronautics/Offroad 1.3.1-port.1 bundle](https://github.com/NotAsher999/Simulated-Project-1.20.1).
+
+The last two links are the formal 1.20.1 port repositories used by this
+project. Download or build their production distribution JARs for a normal
+Minecraft instance. Files ending in `-dev.jar`, `-sources.jar` or `-all.jar`
+are development/source artifacts and must not replace the production JARs in
+an ordinary game instance.
+
+Optional integrations are available for
+[CC:Tweaked](https://modrinth.com/mod/cc-tweaked),
+[KubeJS](https://modrinth.com/mod/kubejs) and
+[Create Big Cannons](https://modrinth.com/mod/create-big-cannons). The exact
+tested compatibility versions and Ritchie's Projectile Library requirement are
+recorded in [the dependency map](docs/DEPENDENCY_MAP.md).
+
+## Building this port
+
+The Git source checkout by itself is intentionally not a complete build input.
+Five hash-locked named development JARs from the formal Sable/Simulated
+workspaces are ignored by Git and must be placed in `libs/`; their exact names
+and SHA-256 values are recorded in [the dependency map](docs/DEPENDENCY_MAP.md).
+These mapped JARs are for compilation and development runs only and are not the
+JARs to install in a normal game instance.
+
+Use Java 17 and run `gradlew.bat clean build` after those inputs are present.
+At a clean annotated checkpoint, `build-release.bat` performs the hash-locked
+clean build and creates both a tracked-source archive and a recoverable minimal
+workspace. See [release and recovery](docs/RELEASE.md). Until the remaining
+manual gameplay gates pass, a generated package is an engineering checkpoint,
+not a claim that the migration is fully accepted.
+
+## Features
+
+**Create Propulsion: Simulated** brings propulsion-focused Create gameplay to
+the Sable + Create Aeronautics ecosystem. This branch restores the supplied
+NeoForge 1.21.1 version on Forge 1.20.1 without adding later feature chains.
 
 It adds three thruster types:
 

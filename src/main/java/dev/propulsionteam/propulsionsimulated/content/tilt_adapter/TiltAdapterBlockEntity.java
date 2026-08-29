@@ -18,7 +18,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -241,8 +240,8 @@ public class TiltAdapterBlockEntity extends SplitShaftBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound,  boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putFloat("targetAngle", motion.requestedTarget());
         compound.putFloat("networkTargetAngle", motion.activeTarget());
         compound.putFloat("currentAngle", motion.currentAngle());
@@ -254,8 +253,8 @@ public class TiltAdapterBlockEntity extends SplitShaftBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
         motion.restore(
             compound.getFloat("targetAngle"),
             compound.getFloat("networkTargetAngle"),

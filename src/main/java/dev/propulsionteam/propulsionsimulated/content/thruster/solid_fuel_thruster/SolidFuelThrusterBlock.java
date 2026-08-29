@@ -1,6 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster;
 
-import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
@@ -12,7 +11,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -31,14 +29,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SolidFuelThrusterBlock extends AbstractThrusterBlock {
-    public static final MapCodec<SolidFuelThrusterBlock> CODEC = simpleCodec(SolidFuelThrusterBlock::new);
 
     public SolidFuelThrusterBlock(Properties properties) {
         super(properties);
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction direction = state.getValue(FACING);
         if (direction == Direction.UP) {
             direction = Direction.DOWN;
@@ -75,23 +72,24 @@ public class SolidFuelThrusterBlock extends AbstractThrusterBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
-                                              InteractionHand hand, BlockHitResult hitResult) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack stack = player.getItemInHand(hand);
         if (player != null && !player.isShiftKeyDown() && level.getBlockEntity(pos) instanceof SolidFuelThrusterBlockEntity thruster) {
             if (level.isClientSide()) {
                 ItemStack held = player.getItemInHand(hand);
                 if (held.isEmpty() && !thruster.getFuelStack().isEmpty() && thruster.getBurnTime() <= 0) {
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
                 if (!held.isEmpty() && thruster.getBurnTime() <= 0 && thruster.canAcceptFuel(held)
                     && thruster.getFuelStack().isEmpty()) {
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             } else if (thruster.tryInsertOrExtractFuel(player, hand)) {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        return super.use(state, level, pos, player, hand, hitResult);
     }
 
     @Override
@@ -117,10 +115,5 @@ public class SolidFuelThrusterBlock extends AbstractThrusterBlock {
             return new SmartBlockEntityTicker<>();
         }
         return null;
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 }

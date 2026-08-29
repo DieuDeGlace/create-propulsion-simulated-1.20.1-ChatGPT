@@ -9,7 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class BurnerFuelBehaviour extends BlockEntityBehaviour {
     public static final BehaviourType<BurnerFuelBehaviour> TYPE = new BehaviourType<>();
@@ -70,23 +70,23 @@ public class BurnerFuelBehaviour extends BlockEntityBehaviour {
     //NBT
 
     @Override
-    public void write(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
+    public void write(CompoundTag nbt,  boolean clientPacket) {
         if (fuelStack.isEmpty()) {
             nbt.remove("Fuel");
         } else {
-            nbt.put("Fuel", fuelStack.save(registries));
+            nbt.put("Fuel", fuelStack.save(new CompoundTag()));
         }
-        super.write(nbt, registries, clientPacket);
+        super.write(nbt, clientPacket);
     }
 
     @Override
-    public void read(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
+    public void read(CompoundTag nbt,  boolean clientPacket) {
         if (nbt.contains("Fuel")) {
-            fuelStack = ItemStack.parse(registries, nbt.getCompound("Fuel")).orElse(ItemStack.EMPTY);
+            fuelStack = ItemStack.of(nbt.getCompound("Fuel"));
         } else {
             fuelStack = ItemStack.EMPTY;
         }
-        super.read(nbt, registries, clientPacket);
+        super.read(nbt, clientPacket);
     }
 
     @Override

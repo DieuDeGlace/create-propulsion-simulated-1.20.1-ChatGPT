@@ -2,13 +2,13 @@ package dev.propulsionteam.propulsionsimulated.content.thruster;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
+import dev.propulsionteam.propulsionsimulated.utility.DirectionalPlacement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -43,7 +43,7 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
 
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context) {
-        final Direction baseDirection = context.getNearestLookingDirection();
+        final Direction baseDirection = DirectionalPlacement.nearestLookingDirection(context);
         final Player player = context.getPlayer();
         final Direction placeDirection;
         if (player != null) {
@@ -70,7 +70,7 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
     }
 
     @Override
-    protected VoxelShape getCollisionShape(final BlockState state,
+    public VoxelShape getCollisionShape(final BlockState state,
                                            final BlockGetter level,
                                            final BlockPos pos,
                                            final CollisionContext context) {
@@ -78,13 +78,13 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack,
-                                              final BlockState state,
-                                              final Level level,
-                                              final BlockPos pos,
-                                              final Player player,
-                                              final InteractionHand hand,
-                                              final BlockHitResult hitResult) {
+    public InteractionResult use(final BlockState state,
+                                 final Level level,
+                                 final BlockPos pos,
+                                 final Player player,
+                                 final InteractionHand hand,
+                                 final BlockHitResult hitResult) {
+        final ItemStack stack = player.getItemInHand(hand);
         if (!stack.isEmpty()) {
             String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
             if (PropulsionConfig.isDyeConfigured(itemId)) {
@@ -103,41 +103,33 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
                         }
                     }
                 }
-                return ItemInteractionResult.sidedSuccess(level.isClientSide());
+                return InteractionResult.sidedSuccess(level.isClientSide());
             }
         }
-        final ItemInteractionResult interactionResult = this.onBlockEntityUseItemOn(level, pos,
+        final InteractionResult interactionResult = this.onBlockEntityUse(level, pos,
                 be -> be.tryConsumeFuelBucket(player, hand, stack)
-                        ? ItemInteractionResult.sidedSuccess(level.isClientSide())
-                        : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
-        if (interactionResult != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) {
+                        ? InteractionResult.sidedSuccess(level.isClientSide())
+                        : InteractionResult.PASS);
+        if (interactionResult != InteractionResult.PASS) {
             return interactionResult;
         }
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(final BlockState state,
-                                               final Level level,
-                                               final BlockPos pos,
-                                               final Player player,
-                                               final BlockHitResult hitResult) {
-        if (!level.isClientSide()) {
-            if (level.getBlockEntity(pos) instanceof AbstractThrusterBlockEntity be) {
-                String currentDye = be.getDyeId();
-                if (currentDye != null) {
-                    be.setDyeId(null);
-                    Block.popResource(level, pos, new ItemStack(
-                        BuiltInRegistries.ITEM.get(ResourceLocation.parse(currentDye))));
-                    return InteractionResult.SUCCESS;
+        if (stack.isEmpty()) {
+            if (!level.isClientSide()) {
+                if (level.getBlockEntity(pos) instanceof AbstractThrusterBlockEntity be) {
+                    String currentDye = be.getDyeId();
+                    if (currentDye != null) {
+                        be.setDyeId(null);
+                        Block.popResource(level, pos, new ItemStack(
+                                BuiltInRegistries.ITEM.get(new ResourceLocation(currentDye))));
+                        return InteractionResult.SUCCESS;
+                    }
                 }
-            }
-        } else {
-            if (level.getBlockEntity(pos) instanceof AbstractThrusterBlockEntity be && be.getDyeId() != null) {
+            } else if (level.getBlockEntity(pos) instanceof AbstractThrusterBlockEntity be
+                    && be.getDyeId() != null) {
                 return InteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.PASS;
+        return super.use(state, level, pos, player, hand, hitResult);
     }
 
     @Override

@@ -60,15 +60,15 @@ public class DualRowValueBehaviour extends BlockEntityBehaviour implements Value
 	}
 
 	@Override
-	public void write(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
+	public void write(CompoundTag nbt,  boolean clientPacket) {
 		nbt.putInt("DualRowValue", value);
-		super.write(nbt, registries, clientPacket);
+		super.write(nbt, clientPacket);
 	}
 
 	@Override
-	public void read(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
+	public void read(CompoundTag nbt,  boolean clientPacket) {
 		value = nbt.getInt("DualRowValue");
-		super.read(nbt, registries, clientPacket);
+		super.read(nbt, clientPacket);
 	}
 	
 	public DualRowValueBehaviour withCallback(Consumer<Integer> valueCallback) {

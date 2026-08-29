@@ -3,7 +3,7 @@ package dev.propulsionteam.propulsionsimulated;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionDefaultStress;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,88 +11,88 @@ import java.util.List;
 import java.util.Map;
 
 public class PropulsionConfig {
-    public static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
-    public static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
-    public static final ModConfigSpec COMMON_SPEC;
-    public static final ModConfigSpec CLIENT_SPEC;
+    public static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+    public static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+    public static final ForgeConfigSpec COMMON_SPEC;
+    public static final ForgeConfigSpec CLIENT_SPEC;
 
     // ── Thruster (reference-style typed values for new code) ────────────────
-    public static final ModConfigSpec.DoubleValue BASE_THRUST;
-    public static final ModConfigSpec.IntValue OBSTRUCTION_SCAN_LENGTH;
-    public static final ModConfigSpec.BooleanValue OBSTRUCTION_IGNORE_OTHER_SUBLEVELS;
-    public static final ModConfigSpec.IntValue FUEL_TANK_CAPACITY_MB;
+    public static final ForgeConfigSpec.DoubleValue BASE_THRUST;
+    public static final ForgeConfigSpec.IntValue OBSTRUCTION_SCAN_LENGTH;
+    public static final ForgeConfigSpec.BooleanValue OBSTRUCTION_IGNORE_OTHER_SUBLEVELS;
+    public static final ForgeConfigSpec.IntValue FUEL_TANK_CAPACITY_MB;
 
-    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_BASE_THRUST;
-    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MAX_THRUST;
-    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MULTIBLOCK_2X2X2_MAX_THRUST;
-    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MULTIBLOCK_3X3X3_MAX_THRUST;
-    public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_BASE_THRUST;
-    public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_MAX_THRUST;
-    public static final ModConfigSpec.DoubleValue FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
+    public static final ForgeConfigSpec.DoubleValue CREATIVE_THRUSTER_BASE_THRUST;
+    public static final ForgeConfigSpec.DoubleValue CREATIVE_THRUSTER_MAX_THRUST;
+    public static final ForgeConfigSpec.DoubleValue CREATIVE_THRUSTER_MULTIBLOCK_2X2X2_MAX_THRUST;
+    public static final ForgeConfigSpec.DoubleValue CREATIVE_THRUSTER_MULTIBLOCK_3X3X3_MAX_THRUST;
+    public static final ForgeConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_BASE_THRUST;
+    public static final ForgeConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_MAX_THRUST;
+    public static final ForgeConfigSpec.DoubleValue FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
 
-    public static final ModConfigSpec.IntValue ION_THRUSTER_ENERGY_CAPACITY_FE;
-    public static final ModConfigSpec.DoubleValue ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE;
-    public static final ModConfigSpec.DoubleValue ION_THRUSTER_BASE_THRUST;
-    public static final ModConfigSpec.DoubleValue ION_MULTIBLOCK_2X_THRUST_MULTIPLIER;
-    public static final ModConfigSpec.DoubleValue ION_MULTIBLOCK_3X_THRUST_MULTIPLIER;
+    public static final ForgeConfigSpec.IntValue ION_THRUSTER_ENERGY_CAPACITY_FE;
+    public static final ForgeConfigSpec.DoubleValue ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE;
+    public static final ForgeConfigSpec.DoubleValue ION_THRUSTER_BASE_THRUST;
+    public static final ForgeConfigSpec.DoubleValue ION_MULTIBLOCK_2X_THRUST_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue ION_MULTIBLOCK_3X_THRUST_MULTIPLIER;
 
-    public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_BASE_THRUST;
-    public static final ModConfigSpec.DoubleValue LIQUID_VECTOR_THRUSTER_BASE_THRUST;
-    public static final ModConfigSpec.IntValue LIQUID_VECTOR_THRUSTER_FUEL_TANK_CAPACITY_MB;
-    public static final ModConfigSpec.DoubleValue LIQUID_VECTOR_THRUSTER_FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
+    public static final ForgeConfigSpec.DoubleValue VECTOR_THRUSTER_BASE_THRUST;
+    public static final ForgeConfigSpec.DoubleValue LIQUID_VECTOR_THRUSTER_BASE_THRUST;
+    public static final ForgeConfigSpec.IntValue LIQUID_VECTOR_THRUSTER_FUEL_TANK_CAPACITY_MB;
+    public static final ForgeConfigSpec.DoubleValue LIQUID_VECTOR_THRUSTER_FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
 
-    public static final ModConfigSpec.DoubleValue SOLID_FUEL_THRUSTER_BASE_THRUST;
-    public static final ModConfigSpec.DoubleValue SOLID_FUEL_THRUSTER_NOZZLE_OFFSET;
-    public static final ModConfigSpec.DoubleValue SOLID_FUEL_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
-    public static final ModConfigSpec.DoubleValue SOLID_FUEL_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue SOLID_FUEL_THRUSTER_BASE_THRUST;
+    public static final ForgeConfigSpec.DoubleValue SOLID_FUEL_THRUSTER_NOZZLE_OFFSET;
+    public static final ForgeConfigSpec.DoubleValue SOLID_FUEL_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue SOLID_FUEL_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
 
-    public static final ModConfigSpec.DoubleValue MULTIBLOCK_2X_THRUST_MULTIPLIER;
-    public static final ModConfigSpec.DoubleValue MULTIBLOCK_3X_THRUST_MULTIPLIER;
-    public static final ModConfigSpec.DoubleValue MULTIBLOCK_2X_FUEL_EFFICIENCY;
-    public static final ModConfigSpec.DoubleValue MULTIBLOCK_3X_FUEL_EFFICIENCY;
-    public static final ModConfigSpec.DoubleValue MULTIBLOCK_2X_OXIDIZER_EFFICIENCY;
-    public static final ModConfigSpec.DoubleValue MULTIBLOCK_3X_OXIDIZER_EFFICIENCY;
-    public static final ModConfigSpec.BooleanValue DAMAGE_ENTITIES;
-    public static final ModConfigSpec.DoubleValue NOZZLE_OFFSET_FROM_CENTER;
-    public static final ModConfigSpec.BooleanValue USE_ATMOSPHERIC_PRESSURE;
-    public static final ModConfigSpec.DoubleValue ATMOSPHERIC_PRESSURE_AMOUNT;
-    public static final ModConfigSpec.DoubleValue THRUST_UNITS_PER_KN;
-    public static final ModConfigSpec.IntValue CLIENT_PARTICLES_PER_TICK;
-    public static final Map<String, ModConfigSpec.IntValue> FUEL_EFFICIENCY_ENTRIES = new LinkedHashMap<>();
-    public static final Map<String, ModConfigSpec.IntValue> FUEL_BURN_RATE_ENTRIES = new LinkedHashMap<>();
-    public static final Map<String, ModConfigSpec.ConfigValue<String>> THRUSTER_DYE_COLORS = new LinkedHashMap<>();
-    public static final ModConfigSpec.IntValue CABLE_ENERGY_TRANSFER;
+    public static final ForgeConfigSpec.DoubleValue MULTIBLOCK_2X_THRUST_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue MULTIBLOCK_3X_THRUST_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue MULTIBLOCK_2X_FUEL_EFFICIENCY;
+    public static final ForgeConfigSpec.DoubleValue MULTIBLOCK_3X_FUEL_EFFICIENCY;
+    public static final ForgeConfigSpec.DoubleValue MULTIBLOCK_2X_OXIDIZER_EFFICIENCY;
+    public static final ForgeConfigSpec.DoubleValue MULTIBLOCK_3X_OXIDIZER_EFFICIENCY;
+    public static final ForgeConfigSpec.BooleanValue DAMAGE_ENTITIES;
+    public static final ForgeConfigSpec.DoubleValue NOZZLE_OFFSET_FROM_CENTER;
+    public static final ForgeConfigSpec.BooleanValue USE_ATMOSPHERIC_PRESSURE;
+    public static final ForgeConfigSpec.DoubleValue ATMOSPHERIC_PRESSURE_AMOUNT;
+    public static final ForgeConfigSpec.DoubleValue THRUST_UNITS_PER_KN;
+    public static final ForgeConfigSpec.IntValue CLIENT_PARTICLES_PER_TICK;
+    public static final Map<String, ForgeConfigSpec.IntValue> FUEL_EFFICIENCY_ENTRIES = new LinkedHashMap<>();
+    public static final Map<String, ForgeConfigSpec.IntValue> FUEL_BURN_RATE_ENTRIES = new LinkedHashMap<>();
+    public static final Map<String, ForgeConfigSpec.ConfigValue<String>> THRUSTER_DYE_COLORS = new LinkedHashMap<>();
+    public static final ForgeConfigSpec.IntValue CABLE_ENERGY_TRANSFER;
 
     public enum PlumeRenderMode {
         PARTICLE,
         SHADER
     }
 
-    public static final ModConfigSpec.EnumValue<PlumeRenderMode> PLUME_RENDER_MODE;
+    public static final ForgeConfigSpec.EnumValue<PlumeRenderMode> PLUME_RENDER_MODE;
 
 
-    public static final ModConfigSpec.BooleanValue DEBUG_THRUSTER;
+    public static final ForgeConfigSpec.BooleanValue DEBUG_THRUSTER;
 
     // Stirling engine
-    public static final ModConfigSpec.ConfigValue<Double> STIRLING_GENERATED_SU;
-    public static final ModConfigSpec.ConfigValue<Double> TILT_ADAPTER_ANGLE_RANGE;
-    public static final ModConfigSpec.IntValue ADVANCED_TILT_ADAPTER_MAX_ANGLE;
-    public static final ModConfigSpec.ConfigValue<Double> STIRLING_REVOLUTION_PERIOD;
-    public static final ModConfigSpec.ConfigValue<Double> STIRLING_CRANK_RADIUS;
-    public static final ModConfigSpec.ConfigValue<Double> STIRLING_CONROD_LENGTH;
+    public static final ForgeConfigSpec.ConfigValue<Double> STIRLING_GENERATED_SU;
+    public static final ForgeConfigSpec.ConfigValue<Double> TILT_ADAPTER_ANGLE_RANGE;
+    public static final ForgeConfigSpec.IntValue ADVANCED_TILT_ADAPTER_MAX_ANGLE;
+    public static final ForgeConfigSpec.ConfigValue<Double> STIRLING_REVOLUTION_PERIOD;
+    public static final ForgeConfigSpec.ConfigValue<Double> STIRLING_CRANK_RADIUS;
+    public static final ForgeConfigSpec.ConfigValue<Double> STIRLING_CONROD_LENGTH;
 
     // Burners
-    public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_POWER_HEATED_MIXERS;
-    public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_HEAT_STEAM_ENGINES;
-    public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_SUPERHEAT_STEAM_ENGINES;
-    public static final ModConfigSpec.ConfigValue<Boolean> BLAZE_BURNERS_HEAT_STIRLING_ENGINES;
-    public static final ModConfigSpec.ConfigValue<Double> SOLID_BURNER_FUEL_CONSUMPTION_MULTIPLIER;
-    public static final Map<String, ModConfigSpec.ConfigValue<String>> CORAL_FUEL_CONVERSION_RATE_ENTRIES = new LinkedHashMap<>();
+    public static final ForgeConfigSpec.ConfigValue<Boolean> BURNERS_POWER_HEATED_MIXERS;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> BURNERS_HEAT_STEAM_ENGINES;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> BURNERS_SUPERHEAT_STEAM_ENGINES;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> BLAZE_BURNERS_HEAT_STIRLING_ENGINES;
+    public static final ForgeConfigSpec.ConfigValue<Double> SOLID_BURNER_FUEL_CONSUMPTION_MULTIPLIER;
+    public static final Map<String, ForgeConfigSpec.ConfigValue<String>> CORAL_FUEL_CONVERSION_RATE_ENTRIES = new LinkedHashMap<>();
 
     /**
      * Extra fuel lines {@code fluid=efficiency,burnRate}; merged after defaults; duplicates override.
      */
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> ADDITIONAL_THRUSTER_FUEL_PROPERTY_LINES;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ADDITIONAL_THRUSTER_FUEL_PROPERTY_LINES;
 
     static {
         //#region Common (server)
@@ -393,7 +393,7 @@ public class PropulsionConfig {
 
 
     public static Integer getDyeColor(String dyeId) {
-        ModConfigSpec.ConfigValue<String> cv = THRUSTER_DYE_COLORS.get(dyeId);
+        ForgeConfigSpec.ConfigValue<String> cv = THRUSTER_DYE_COLORS.get(dyeId);
         if (cv == null) return null;
         try {
             return Integer.parseUnsignedInt(cv.get().trim(), 16);
@@ -409,7 +409,7 @@ public class PropulsionConfig {
     public static List<? extends String> getCoralFuelConversionRatesOrDefault() {
         if (!CORAL_FUEL_CONVERSION_RATE_ENTRIES.isEmpty()) {
             List<String> entries = new ArrayList<>();
-            for (Map.Entry<String, ModConfigSpec.ConfigValue<String>> e : CORAL_FUEL_CONVERSION_RATE_ENTRIES.entrySet()) {
+            for (Map.Entry<String, ForgeConfigSpec.ConfigValue<String>> e : CORAL_FUEL_CONVERSION_RATE_ENTRIES.entrySet()) {
                 try {
                     entries.add(e.getKey() + "=" + e.getValue().get());
                 } catch (IllegalStateException ignored) {
@@ -429,9 +429,9 @@ public class PropulsionConfig {
         LinkedHashMap<String, String> merged = new LinkedHashMap<>();
 
         if (!FUEL_EFFICIENCY_ENTRIES.isEmpty() && !FUEL_BURN_RATE_ENTRIES.isEmpty()) {
-            for (Map.Entry<String, ModConfigSpec.IntValue> e : FUEL_EFFICIENCY_ENTRIES.entrySet()) {
+            for (Map.Entry<String, ForgeConfigSpec.IntValue> e : FUEL_EFFICIENCY_ENTRIES.entrySet()) {
                 try {
-                    ModConfigSpec.IntValue burnRate = FUEL_BURN_RATE_ENTRIES.get(e.getKey());
+                    ForgeConfigSpec.IntValue burnRate = FUEL_BURN_RATE_ENTRIES.get(e.getKey());
                     if (burnRate == null) {
                         continue;
                     }

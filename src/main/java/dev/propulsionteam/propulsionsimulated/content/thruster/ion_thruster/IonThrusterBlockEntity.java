@@ -16,7 +16,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -26,9 +25,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.energy.IEnergyStorage;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
 import java.util.Locale;
@@ -94,8 +93,19 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     @Override
     public void tick() {
         // Ion thrusters should evaluate power/consumption every server tick so FE usage is stable and responsive.
-        this.isThrustDirty = true;
+        if (requiresPerTickEnergyUpdate()) {
+            this.isThrustDirty = true;
+        }
         super.tick();
+    }
+
+    protected boolean requiresPerTickEnergyUpdate() {
+        return true;
+    }
+
+    @Override
+    protected boolean usesFluidFuelAccounting() {
+        return false;
     }
 
     @Override
@@ -506,24 +516,24 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     @Override
-    protected void write(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
+    protected void write(final CompoundTag tag, final boolean clientPacket) {
         tag.putInt("EnergyStored", this.energyStored);
         tag.putDouble("EnergyDrainAccumulator", this.energyDrainAccumulator);
         tag.putDouble("LastConsumedFePerTick", this.lastConsumedFePerTick);
-        super.write(tag, registries, clientPacket);
+        super.write(tag, clientPacket);
     }
 
     @Override
-    protected void read(final CompoundTag tag, final HolderLookup.Provider registries, final boolean clientPacket) {
+    protected void read(final CompoundTag tag, final boolean clientPacket) {
         this.energyStored = tag.getInt("EnergyStored");
         this.energyDrainAccumulator = tag.getDouble("EnergyDrainAccumulator");
         this.lastConsumedFePerTick = tag.getDouble("LastConsumedFePerTick");
         this.clampEnergyToCapacity();
-        super.read(tag, registries, clientPacket);
+        super.read(tag, clientPacket);
         // Preserve multiblock connectivity state loaded by base class.
     }
 
     private void clampEnergyToCapacity() {
-        this.energyStored = Math.clamp(this.energyStored, 0, this.getEnergyCapacity());
+        this.energyStored = net.minecraft.util.Mth.clamp(this.energyStored, 0, this.getEnergyCapacity());
     }
 }

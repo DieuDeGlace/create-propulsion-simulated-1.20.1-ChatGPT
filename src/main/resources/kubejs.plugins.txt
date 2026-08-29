@@ -1,2 +1,1 @@
 dev.propulsionteam.propulsionsimulated.compat.kubejs.PropulsionKubeJSPlugin
-dev.propulsionteam.propulsionsimulated.compat.kubejs.PropulsionKubeJSPlugin

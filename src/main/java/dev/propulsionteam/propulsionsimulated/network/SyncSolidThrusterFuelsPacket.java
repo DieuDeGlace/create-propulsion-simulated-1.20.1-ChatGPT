@@ -10,19 +10,10 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.ItemThrusterPrope
 import dev.propulsionteam.propulsionsimulated.content.thruster.SolidThrusterFuelManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
-public class SyncSolidThrusterFuelsPacket implements CustomPacketPayload {
-    public static final Type<SyncSolidThrusterFuelsPacket> TYPE =
-        new Type<>(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "sync_solid_thruster_fuels"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, SyncSolidThrusterFuelsPacket> STREAM_CODEC = StreamCodec.of(
-        (buf, payload) -> payload.encode(buf),
-        SyncSolidThrusterFuelsPacket::decode
-    );
+public class SyncSolidThrusterFuelsPacket {
 
     private final Map<ResourceLocation, ItemThrusterProperties> fuelMap;
     private final Set<ResourceLocation> removedFuelIds;
@@ -57,10 +48,5 @@ public class SyncSolidThrusterFuelsPacket implements CustomPacketPayload {
 
     public void handle() {
         SolidThrusterFuelManager.updateClient(fuelMap, removedFuelIds);
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

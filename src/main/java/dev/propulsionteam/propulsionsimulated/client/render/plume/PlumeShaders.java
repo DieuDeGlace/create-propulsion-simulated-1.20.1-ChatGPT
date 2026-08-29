@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.client.event.RegisterShadersEvent;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public final class PlumeShaders {
         event.registerShader(
                 new ShaderInstance(
                         event.getResourceProvider(),
-                        ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "plume"),
+                        new ResourceLocation(CreatePropulsion.ID, "plume"),
                         DefaultVertexFormat.POSITION_TEX_COLOR
                 ),
                 shader -> plume = shader

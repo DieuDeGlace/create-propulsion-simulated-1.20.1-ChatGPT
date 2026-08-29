@@ -11,7 +11,6 @@ import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import net.createmod.catnip.data.Couple;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -124,29 +123,29 @@ public class VectorRedstoneLinkBehaviour extends BlockEntityBehaviour implements
     }
 
     @Override
-    public void write(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(nbt, registries, clientPacket);
-        nbt.put(sideKey + "FrequencyFirst", frequencyFirst.getStack().saveOptional(registries));
-        nbt.put(sideKey + "FrequencyLast", frequencyLast.getStack().saveOptional(registries));
+    public void write(CompoundTag nbt,  boolean clientPacket) {
+        super.write(nbt, clientPacket);
+        nbt.put(sideKey + "FrequencyFirst", frequencyFirst.getStack().save(new CompoundTag()));
+        nbt.put(sideKey + "FrequencyLast", frequencyLast.getStack().save(new CompoundTag()));
         nbt.putLong(sideKey + "LastKnownPosition", blockEntity.getBlockPos().asLong());
     }
 
     @Override
-    public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
+    public void read(CompoundTag nbt,  boolean clientPacket) {
         long positionInTag = blockEntity.getBlockPos().asLong();
         long positionKey = nbt.getLong(sideKey + "LastKnownPosition");
         newPosition = positionInTag != positionKey;
 
-        super.read(nbt, registries, clientPacket);
-        frequencyFirst = Frequency.of(ItemStack.parseOptional(registries, nbt.getCompound(sideKey + "FrequencyFirst")));
-        frequencyLast = Frequency.of(ItemStack.parseOptional(registries, nbt.getCompound(sideKey + "FrequencyLast")));
+        super.read(nbt, clientPacket);
+        frequencyFirst = Frequency.of(ItemStack.of(nbt.getCompound(sideKey + "FrequencyFirst")));
+        frequencyLast = Frequency.of(ItemStack.of(nbt.getCompound(sideKey + "FrequencyLast")));
     }
 
     public void setFrequency(boolean first, ItemStack stack) {
         stack = stack.copy();
         stack.setCount(1);
         ItemStack toCompare = first ? frequencyFirst.getStack() : frequencyLast.getStack();
-        boolean changed = !ItemStack.isSameItemSameComponents(stack, toCompare);
+        boolean changed = !ItemStack.isSameItemSameTags(stack, toCompare);
 
         if (changed)
             Create.REDSTONE_LINK_NETWORK_HANDLER.removeFromNetwork(getWorld(), this);

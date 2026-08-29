@@ -23,8 +23,8 @@ import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector3d;
 
 public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
@@ -99,7 +99,7 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     }
 
     private void setSignal(int power, Direction localSide) {
-        int clamped = Math.clamp(power, 0, 15);
+        int clamped = net.minecraft.util.Mth.clamp(power, 0, 15);
         int prev = switch (localSide) {
             case WEST -> westSignal;
             case EAST -> eastSignal;
@@ -265,7 +265,7 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         double firstHitDistance = sample.firstHitDistance();
         float newEfficiency = scanLength <= 0
                 ? 0.0f
-                : Math.clamp((float) (firstHitDistance / scanLength), 0.0f, 1.0f);
+                : net.minecraft.util.Mth.clamp((float) (firstHitDistance / scanLength), 0.0f, 1.0f);
         int newEmptyBlocks = sample.emptyBlocksEstimate();
 
         if (this.emptyBlocks != newEmptyBlocks || Math.abs(this.obstructionEfficiency - newEfficiency) > 1e-4f) {
@@ -322,8 +322,8 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound,  boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putInt("WestSignal", westSignal);
         compound.putInt("EastSignal", eastSignal);
         compound.putInt("DownSignal", downSignal);
@@ -336,8 +336,8 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
         westSignal = compound.getInt("WestSignal");
         eastSignal = compound.getInt("EastSignal");
         downSignal = compound.getInt("DownSignal");
@@ -355,7 +355,7 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
         obstructionEfficiency = compound.contains("ObstructionEfficiency")
                 ? compound.getFloat("ObstructionEfficiency")
-                : (scanLength <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) scanLength, 0.0f, 1.0f));
+                : (scanLength <= 0 ? 0.0f : net.minecraft.util.Mth.clamp((float) emptyBlocks / (float) scanLength, 0.0f, 1.0f));
     }
 
     @Override

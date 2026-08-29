@@ -5,10 +5,10 @@ import net.createmod.catnip.config.ConfigBase;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -26,9 +26,9 @@ public class PropulsionDefaultStress extends ConfigBase {
     private static final Map<ResourceLocation, Double> DEFAULT_IMPACTS = new HashMap<>();
     private static final Map<ResourceLocation, Double> INTERNAL_IMPACTS = new HashMap<>();
 
-    protected final Map<ResourceLocation, ModConfigSpec.ConfigValue<Double>> impacts = new HashMap<>();
+    protected final Map<ResourceLocation, ForgeConfigSpec.ConfigValue<Double>> impacts = new HashMap<>();
 
-    public static void init(ModConfigSpec spec) {
+    public static void init(ForgeConfigSpec spec) {
         INSTANCE.specification = spec;
         BlockStressValues.IMPACTS.registerProvider(INSTANCE::getImpact);
     }
@@ -39,7 +39,7 @@ public class PropulsionDefaultStress extends ConfigBase {
     }
 
     @Override
-    public void registerAll(@Nonnull ModConfigSpec.Builder builder) {
+    public void registerAll(@Nonnull ForgeConfigSpec.Builder builder) {
         builder.push("Stress impacts");
 
         //Internal impacts are not added into spec as they must not be modified!
@@ -55,7 +55,7 @@ public class PropulsionDefaultStress extends ConfigBase {
         ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
 
         //Check config
-        ModConfigSpec.ConfigValue<Double> configValue = this.impacts.get(id);
+        ForgeConfigSpec.ConfigValue<Double> configValue = this.impacts.get(id);
         if (configValue != null) return configValue::get;
 
         //Check internal

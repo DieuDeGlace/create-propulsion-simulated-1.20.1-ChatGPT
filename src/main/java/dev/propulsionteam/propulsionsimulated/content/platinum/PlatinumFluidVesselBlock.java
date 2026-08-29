@@ -21,7 +21,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -49,10 +48,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.util.DeferredSoundType;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.Locale;
 
@@ -151,23 +149,24 @@ public class PlatinumFluidVesselBlock extends Block implements IWrenchable, IBE<
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
-                                              Player player, InteractionHand hand, BlockHitResult hitResult) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos,
+                                 Player player, InteractionHand hand, BlockHitResult hitResult) {
+        ItemStack stack = player.getItemInHand(hand);
         boolean onClient = level.isClientSide;
 
         if (stack.isEmpty()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
 
         FluidExchange exchange = null;
         PlatinumFluidVesselBlockEntity be = ConnectivityHandler.partAt(getBlockEntityType(), level, pos);
         if (be == null) {
-            return ItemInteractionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        IFluidHandler vesselCapability = level.getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
+        IFluidHandler vesselCapability = be.getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null);
         if (vesselCapability == null) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
         FluidStack prevFluidInVessel = vesselCapability.getFluidInTank(0).copy();
 
@@ -179,9 +178,9 @@ public class PlatinumFluidVesselBlock extends Block implements IWrenchable, IBE<
 
         if (exchange == null) {
             if (GenericItemEmptying.canItemBeEmptied(level, stack) || GenericItemFilling.canItemBeFilled(level, stack)) {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
 
         SoundEvent soundEvent = null;
@@ -208,7 +207,7 @@ public class PlatinumFluidVesselBlock extends Block implements IWrenchable, IBE<
             level.playSound(null, pos, soundEvent, SoundSource.BLOCKS, .5f, pitch);
         }
 
-        if (!FluidStack.isSameFluidSameComponents(fluidInVessel, prevFluidInVessel)) {
+        if (!fluidInVessel.isFluidEqual(prevFluidInVessel)) {
             PlatinumFluidVesselBlockEntity controllerBE = be.getControllerBE();
             if (controllerBE != null) {
                 if (fluidState != null && onClient) {
@@ -225,7 +224,7 @@ public class PlatinumFluidVesselBlock extends Block implements IWrenchable, IBE<
                     Vec3 motion = player.position().subtract(vec).scale(1 / 20f);
                     vec = vec.add(motion);
                     level.addParticle(blockParticleData, vec.x, vec.y, vec.z, motion.x, motion.y, motion.z);
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
 
                 controllerBE.sendDataImmediately();
@@ -233,7 +232,7 @@ public class PlatinumFluidVesselBlock extends Block implements IWrenchable, IBE<
             }
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -333,8 +332,8 @@ public class PlatinumFluidVesselBlock extends Block implements IWrenchable, IBE<
     }
 
     public static final SoundType SILENCED_METAL =
-        new DeferredSoundType(0.1F, 1.5F, () -> SoundEvents.METAL_BREAK, () -> SoundEvents.METAL_STEP,
-            () -> SoundEvents.METAL_PLACE, () -> SoundEvents.METAL_HIT, () -> SoundEvents.METAL_FALL);
+        new SoundType(0.1F, 1.5F, SoundEvents.METAL_BREAK, SoundEvents.METAL_STEP,
+            SoundEvents.METAL_PLACE, SoundEvents.METAL_HIT, SoundEvents.METAL_FALL);
 
     @Override
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {

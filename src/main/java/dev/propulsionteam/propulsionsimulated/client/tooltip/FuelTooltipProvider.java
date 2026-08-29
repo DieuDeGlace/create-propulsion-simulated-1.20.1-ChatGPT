@@ -6,10 +6,10 @@ import net.createmod.catnip.lang.FontHelper.Palette;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +18,7 @@ public final class FuelTooltipProvider implements ITooltipProvider {
     @Override
     public void addText(final ItemTooltipEvent event, final List<Component> tooltipList) {
         final ItemStack stack = event.getItemStack();
-        final IFluidHandlerItem fluidHandler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+        final IFluidHandlerItem fluidHandler = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).orElse(null);
         if (fluidHandler == null) {
             return;
         }
@@ -33,7 +33,9 @@ public final class FuelTooltipProvider implements ITooltipProvider {
             return;
         }
         TooltipHandler.wrapShiftHoldText(tooltipList, "createpropulsion.tooltip.holdForRocketFuelSummary", () -> {
-            final int thrustPercent = Math.round(ThrusterFuelManager.getEfficiency(fluidStack.getFluid()) * 100.0f);
+            final float effectiveThrustMultiplier = properties.thrustMultiplier()
+                    * ThrusterFuelManager.getEfficiency(fluidStack.getFluid());
+            final int thrustPercent = Math.round(effectiveThrustMultiplier * 100.0f);
             final Component thrustLine = Component.translatable("createpropulsion.tooltip.thrust")
                     .append(": ")
                     .withStyle(Palette.STANDARD_CREATE.primary())

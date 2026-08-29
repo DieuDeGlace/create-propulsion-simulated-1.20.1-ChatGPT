@@ -117,22 +117,22 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
     @Override
     protected ParticleOptions createParticleOptions() {
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.PLASMA) {
-            return new PlasmaParticleData();
+            return new PlasmaParticleData(List.of(), getDyeColor());
         }
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.ION) {
-            return new IonParticleData();
+            return new IonParticleData(List.of(), getDyeColor(), null);
         }
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.PLUME) {
-            return new PlumeParticleData();
+            return new PlumeParticleData(List.of(), getDyeColor());
         }
-        return new PlumeParticleData();
+        return new PlumeParticleData(List.of(), getDyeColor());
     }
 
     /** Creative-vector Ion mode retains the vector nozzle's redstone-driven particle narrowing. */
     public ParticleOptions createCreativeVectorPlumeParticleOptions() {
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.ION) {
             float size = Mth.lerp(getInterpolatedFlapProgress(1.0f), 0.85f, 0.35f);
-            return new IonParticleData(List.of(), null, size);
+            return new IonParticleData(List.of(), getDyeColor(), size);
         }
         return createParticleOptions();
     }
@@ -253,15 +253,15 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
     }
 
     @Override
-    protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound,  boolean clientPacket) {
+        super.write(compound, clientPacket);
         compound.putInt("plumeType", plumeType.ordinal());
         compound.putFloat("PeripheralThrustOutput", peripheralThrustOutput);
     }
 
     @Override
-    protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound,  boolean clientPacket) {
+        super.read(compound, clientPacket);
         if (compound.contains("plumeType")) {
             int idx = compound.getInt("plumeType");
             plumeType = CreativeThrusterBlockEntity.PlumeType.values()[Mth.clamp(idx, 0, CreativeThrusterBlockEntity.PlumeType.values().length - 1)];

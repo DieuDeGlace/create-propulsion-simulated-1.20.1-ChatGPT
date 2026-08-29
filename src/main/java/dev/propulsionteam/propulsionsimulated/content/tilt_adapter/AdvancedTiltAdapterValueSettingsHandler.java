@@ -15,12 +15,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.Tags.Items;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.common.Tags.Items;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
  * Create's default handler picks the first behaviour whose {@code testHit} passes.
@@ -72,7 +72,8 @@ public class AdvancedTiltAdapterValueSettingsHandler {
         if (!target.isActive()) {
             return;
         }
-        if (target.onlyVisibleWithWrench() && !player.getItemInHand(hand).is(Items.TOOLS_WRENCH)) {
+        if (target.onlyVisibleWithWrench()
+            && !com.simibubi.create.AllTags.AllItemTags.WRENCH.matches(player.getItemInHand(hand))) {
             return;
         }
 

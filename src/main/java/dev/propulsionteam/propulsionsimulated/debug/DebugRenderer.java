@@ -15,18 +15,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 
 import java.awt.Color;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class DebugRenderer {
     private static class TimedBoxData {
         final Vec3 position;
@@ -125,7 +125,10 @@ public class DebugRenderer {
 
     //Decay boxes
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         if (timedBoxes.isEmpty()) {
             return;
         }
@@ -160,7 +163,7 @@ public class DebugRenderer {
         poseStack.pushPose();
         poseStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
-        boolean isDebugMode = mc.getDebugOverlay().showDebugScreen();
+        boolean isDebugMode = mc.options.renderDebug;
 
         for (TimedBoxData boxData : timedBoxes.values()) {
             if (boxData.onlyInDebugMode && !isDebugMode) {
@@ -216,8 +219,8 @@ public class DebugRenderer {
     }
 
     private static void drawLine(VertexConsumer consumer, Matrix4f matrix, Vector3f pos1, Vector3f pos2, float r, float g, float b, float a) {
-        consumer.addVertex(matrix, pos1.x(), pos1.y(), pos1.z()).setColor(r, g, b, a);
-        consumer.addVertex(matrix, pos2.x(), pos2.y(), pos2.z()).setColor(r, g, b, a);
+        consumer.vertex(matrix, pos1.x(), pos1.y(), pos1.z()).color(r, g, b, a).endVertex();
+        consumer.vertex(matrix, pos2.x(), pos2.y(), pos2.z()).color(r, g, b, a).endVertex();
     }
 
     //Utility

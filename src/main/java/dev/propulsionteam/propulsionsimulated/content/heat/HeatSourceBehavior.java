@@ -26,15 +26,15 @@ public class HeatSourceBehavior extends BlockEntityBehaviour {
     }
 
     @Override
-    public void write(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        nbt.put("HeatBuffer", heatBuffer.serializeNBT(registries));
-        super.write(nbt, registries, clientPacket);
+    public void write(CompoundTag nbt,  boolean clientPacket) {
+        nbt.put("HeatBuffer", heatBuffer.serializeNBT());
+        super.write(nbt, clientPacket);
     }
 
     @Override
-    public void read(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
-        heatBuffer.deserializeNBT(registries, nbt.getCompound("HeatBuffer"));
-        super.read(nbt, registries, clientPacket);
+    public void read(CompoundTag nbt,  boolean clientPacket) {
+        heatBuffer.deserializeNBT(nbt.getCompound("HeatBuffer"));
+        super.read(nbt, clientPacket);
     }
 
 }

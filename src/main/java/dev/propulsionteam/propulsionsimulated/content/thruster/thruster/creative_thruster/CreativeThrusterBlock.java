@@ -8,7 +8,6 @@ import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
-import com.mojang.serialization.MapCodec;
 
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -42,7 +41,6 @@ public class CreativeThrusterBlock extends AbstractThrusterBlock implements IWre
     public BlockEntityType<? extends AbstractThrusterBlockEntity> getBlockEntityType() {
         return PropulsionBlockEntities.CREATIVE_THRUSTER_BLOCK_ENTITY.get();
     }
-    public static final MapCodec<CreativeThrusterBlock> CODEC = simpleCodec(CreativeThrusterBlock::new);
     public static final DirectionProperty PLACEMENT_FACING = DirectionProperty.create("placement_facing", Direction.values());
 
     public CreativeThrusterBlock(Properties properties) {
@@ -50,11 +48,6 @@ public class CreativeThrusterBlock extends AbstractThrusterBlock implements IWre
         this.registerDefaultState(this.defaultBlockState()
                 .setValue(PLACEMENT_FACING, Direction.DOWN)
                 .setValue(ThrusterBlock.MULTIBLOCK, false));
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override

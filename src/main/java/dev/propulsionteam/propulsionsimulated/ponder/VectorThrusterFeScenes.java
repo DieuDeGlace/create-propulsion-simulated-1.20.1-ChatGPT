@@ -23,7 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
 
 /**
  * Ponder for the Forge-Energy vector thruster (see {@code ponder_vector_thruster_normal.nbt}).
@@ -81,7 +81,7 @@ public final class VectorThrusterFeScenes {
         // - Section 1: reveal layout + optional pump line -------------------
         scene.idle(8);
         if (sceneType.hasPumpLine()) {
-            Block pumpBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("create", "mechanical_pump"));
+            Block pumpBlock = BuiltInRegistries.BLOCK.get(new ResourceLocation("create", "mechanical_pump"));
             BlockState pumpState = pumpBlock.defaultBlockState()
                 .setValue(DirectionalKineticBlock.FACING, Direction.WEST);
             scene.world().setBlock(motorPos, pumpState, false);
@@ -303,7 +303,7 @@ public final class VectorThrusterFeScenes {
     }
 
     private static void setLeverState(CreateSceneBuilder scene, LeverControl lever, int power) {
-        int clampedPower = Math.clamp(power, 0, 15);
+        int clampedPower = net.minecraft.util.Mth.clamp(power, 0, 15);
         scene.world().modifyBlockEntityNBT(lever.selection(), AnalogLeverBlockEntity.class,
             nbt -> nbt.putInt("State", clampedPower));
     }
@@ -374,7 +374,7 @@ public final class VectorThrusterFeScenes {
     }
 
     private static int lerpPower(int from, int to, float progress) {
-        return Math.clamp(Math.round(from + (to - from) * progress), 0, 15);
+        return net.minecraft.util.Mth.clamp(Math.round(from + (to - from) * progress), 0, 15);
     }
 
     private static void emitIonBurst(CreateSceneBuilder scene, SceneBuildingUtil util, int x, int y, int z,

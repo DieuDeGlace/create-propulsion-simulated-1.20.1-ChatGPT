@@ -5,7 +5,6 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterB
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterShapes;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -25,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ThrusterBlock extends AbstractThrusterBlock {
-    public static final MapCodec<ThrusterBlock> CODEC = simpleCodec(ThrusterBlock::new);
     public static final BooleanProperty MULTIBLOCK = BooleanProperty.create("multi");
 
     public ThrusterBlock(Properties properties) {
@@ -40,7 +38,7 @@ public class ThrusterBlock extends AbstractThrusterBlock {
     }
 
     @Override
-    protected VoxelShape getShape(final BlockState state,
+    public VoxelShape getShape(final BlockState state,
                                   final BlockGetter level,
                                   final BlockPos pos,
                                   final CollisionContext context) {
@@ -54,11 +52,6 @@ public class ThrusterBlock extends AbstractThrusterBlock {
     @Override
     public Class<AbstractThrusterBlockEntity> getBlockEntityClass() {
         return AbstractThrusterBlockEntity.class;
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override

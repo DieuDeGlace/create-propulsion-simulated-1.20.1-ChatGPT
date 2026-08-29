@@ -27,106 +27,107 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.V
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingBlock;
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingItem;
 import dev.propulsionteam.propulsionsimulated.content.wing.WingBlock;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 
 public class PropulsionBlocks {
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePropulsion.ID);
-    public static final DeferredRegister.Items BLOCK_ITEMS = DeferredRegister.createItems(CreatePropulsion.ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.BLOCKS, CreatePropulsion.ID);
+    public static final DeferredRegister<Item> BLOCK_ITEMS = DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.ITEMS, CreatePropulsion.ID);
 
-    public static final DeferredBlock<ThrusterBlock> THRUSTER_BLOCK = BLOCKS.register("thruster",
+    public static final RegistryObject<ThrusterBlock> THRUSTER_BLOCK = BLOCKS.register("thruster",
         () -> new ThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
-    public static final DeferredBlock<CreativeThrusterBlock> CREATIVE_THRUSTER_BLOCK = BLOCKS.register("creative_thruster",
+    public static final RegistryObject<CreativeThrusterBlock> CREATIVE_THRUSTER_BLOCK = BLOCKS.register("creative_thruster",
         () -> new CreativeThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL)
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
-    public static final DeferredBlock<IonThrusterBlock> ION_THRUSTER_BLOCK = BLOCKS.register("ion_thruster",
+    public static final RegistryObject<IonThrusterBlock> ION_THRUSTER_BLOCK = BLOCKS.register("ion_thruster",
         () -> new IonThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL)
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
-    public static final DeferredBlock<VectorThrusterBlock> VECTOR_THRUSTER_BLOCK = BLOCKS.register("vector_thruster",
+    public static final RegistryObject<VectorThrusterBlock> VECTOR_THRUSTER_BLOCK = BLOCKS.register("vector_thruster",
         () -> new VectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
-    public static final DeferredBlock<LiquidVectorThrusterBlock> LIQUID_VECTOR_THRUSTER_BLOCK = BLOCKS.register("liquid_vector_thruster",
+    public static final RegistryObject<LiquidVectorThrusterBlock> LIQUID_VECTOR_THRUSTER_BLOCK = BLOCKS.register("liquid_vector_thruster",
         () -> new LiquidVectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
-    public static final DeferredBlock<SolidFuelThrusterBlock> SOLID_FUEL_THRUSTER_BLOCK = BLOCKS.register("solid_fuel_thruster",
+    public static final RegistryObject<SolidFuelThrusterBlock> SOLID_FUEL_THRUSTER_BLOCK = BLOCKS.register("solid_fuel_thruster",
         () -> new SolidFuelThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
-    public static final DeferredBlock<CreativeVectorThrusterBlock> CREATIVE_VECTOR_THRUSTER_BLOCK = BLOCKS.register("creative_vector_thruster",
+    public static final RegistryObject<CreativeVectorThrusterBlock> CREATIVE_VECTOR_THRUSTER_BLOCK = BLOCKS.register("creative_vector_thruster",
         () -> new CreativeVectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL)
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
-    public static final DeferredBlock<RedstoneConverterBlock> REDSTONE_CONVERTER_BLOCK = BLOCKS.register("redstone_converter",
+    public static final RegistryObject<RedstoneConverterBlock> REDSTONE_CONVERTER_BLOCK = BLOCKS.register("redstone_converter",
         () -> new RedstoneConverterBlock(Block.Properties.of().mapColor(MapColor.METAL)
             .sound(SoundType.METAL).instabreak()));
-    public static final DeferredBlock<RedstoneTransmissionBlock> REDSTONE_TRANSMISSION_BLOCK = BLOCKS.register("redstone_transmission",
+    public static final RegistryObject<RedstoneTransmissionBlock> REDSTONE_TRANSMISSION_BLOCK = BLOCKS.register("redstone_transmission",
         () -> new RedstoneTransmissionBlock(Block.Properties.of().mapColor(MapColor.PODZOL)
             .sound(SoundType.METAL).strength(2.5f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<SolidBurnerBlock> SOLID_BURNER = BLOCKS.register("solid_burner",
+    public static final RegistryObject<SolidBurnerBlock> SOLID_BURNER = BLOCKS.register("solid_burner",
         () -> new SolidBurnerBlock(Block.Properties.of().mapColor(MapColor.STONE).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.5f, 2.0f).lightLevel(s -> s.getValue(SolidBurnerBlock.LIT) ? 13 : 0)));
-    public static final DeferredBlock<LiquidBurnerBlock> LIQUID_BURNER = BLOCKS.register("liquid_burner",
+    public static final RegistryObject<LiquidBurnerBlock> LIQUID_BURNER = BLOCKS.register("liquid_burner",
         () -> new LiquidBurnerBlock(Block.Properties.of().noOcclusion().mapColor(MapColor.STONE).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.75f, 2.0f)));
-    public static final DeferredBlock<StirlingEngineBlock> STIRLING_ENGINE_BLOCK = BLOCKS.register("stirling_engine",
+    public static final RegistryObject<StirlingEngineBlock> STIRLING_ENGINE_BLOCK = BLOCKS.register("stirling_engine",
         () -> new StirlingEngineBlock(Block.Properties.of().mapColor(MapColor.STONE).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<TiltAdapterBlock> TILT_ADAPTER_BLOCK = BLOCKS.register("tilt_adapter",
+    public static final RegistryObject<TiltAdapterBlock> TILT_ADAPTER_BLOCK = BLOCKS.register("tilt_adapter",
         () -> new TiltAdapterBlock(Block.Properties.of().mapColor(MapColor.PODZOL)
             .sound(SoundType.METAL).strength(2.5f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<AdvancedTiltAdapterBlock> ADVANCED_TILT_ADAPTER_BLOCK = BLOCKS.register("advanced_tilt_adapter",
+    public static final RegistryObject<AdvancedTiltAdapterBlock> ADVANCED_TILT_ADAPTER_BLOCK = BLOCKS.register("advanced_tilt_adapter",
         () -> new AdvancedTiltAdapterBlock(Block.Properties.of().mapColor(MapColor.PODZOL)
             .sound(SoundType.METAL).requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion()));
 
-    public static final DeferredBlock<WingBlock> WING_BLOCK = BLOCKS.register("wing",
+    public static final RegistryObject<WingBlock> WING_BLOCK = BLOCKS.register("wing",
         () -> new WingBlock(Block.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).sound(SoundType.COPPER)
             .strength(1.5f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<WingBlock> TEMPERED_WING_BLOCK = BLOCKS.register("tempered_wing",
+    public static final RegistryObject<WingBlock> TEMPERED_WING_BLOCK = BLOCKS.register("tempered_wing",
         () -> new WingBlock(Block.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).sound(SoundType.COPPER)
             .strength(1.5f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<CopycatWingBlock> COPYCAT_WING = BLOCKS.register("copycat_wing",
+    public static final RegistryObject<CopycatWingBlock> COPYCAT_WING = BLOCKS.register("copycat_wing",
         () -> new CopycatWingBlock(Block.Properties.of().strength(1.5f, 2.0f), 4));
-    public static final DeferredBlock<CopycatWingBlock> COPYCAT_WING_8 = BLOCKS.register("copycat_wing_8",
+    public static final RegistryObject<CopycatWingBlock> COPYCAT_WING_8 = BLOCKS.register("copycat_wing_8",
         () -> new CopycatWingBlock(Block.Properties.of().strength(1.5f, 2.0f), 8));
-    public static final DeferredBlock<CopycatWingBlock> COPYCAT_WING_12 = BLOCKS.register("copycat_wing_12",
+    public static final RegistryObject<CopycatWingBlock> COPYCAT_WING_12 = BLOCKS.register("copycat_wing_12",
         () -> new CopycatWingBlock(Block.Properties.of().strength(1.5f, 2.0f), 12));
-    public static final DeferredBlock<Block> PLATINUM_ORE = BLOCKS.register("platinum_ore",
+    public static final RegistryObject<Block> PLATINUM_ORE = BLOCKS.register("platinum_ore",
         () -> new Block(Block.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE)
             .requiresCorrectToolForDrops().strength(3.0f, 3.0f)));
-    public static final DeferredBlock<Block> DEEPSLATE_PLATINUM_ORE = BLOCKS.register("deepslate_platinum_ore",
+    public static final RegistryObject<Block> DEEPSLATE_PLATINUM_ORE = BLOCKS.register("deepslate_platinum_ore",
         () -> new Block(Block.Properties.of().mapColor(MapColor.DEEPSLATE).sound(SoundType.DEEPSLATE)
             .requiresCorrectToolForDrops().strength(4.5f, 3.0f)));
-    public static final DeferredBlock<Block> PLATINUM_BLOCK = BLOCKS.register("platinum_block",
+    public static final RegistryObject<Block> PLATINUM_BLOCK = BLOCKS.register("platinum_block",
         () -> new Block(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
             .requiresCorrectToolForDrops().strength(5.0f, 6.0f)));
-    public static final DeferredBlock<Block> RAW_PLATINUM_BLOCK = BLOCKS.register("raw_platinum_block",
+    public static final RegistryObject<Block> RAW_PLATINUM_BLOCK = BLOCKS.register("raw_platinum_block",
         () -> new Block(Block.Properties.of().mapColor(MapColor.RAW_IRON).sound(SoundType.STONE)
             .requiresCorrectToolForDrops().strength(5.0f, 6.0f)));
-    public static final DeferredBlock<PlatinumCasingBlock> PLATINUM_CASING = BLOCKS.register("platinum_casing",
+    public static final RegistryObject<PlatinumCasingBlock> PLATINUM_CASING = BLOCKS.register("platinum_casing",
         () -> new PlatinumCasingBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
             .requiresCorrectToolForDrops().strength(5.0f, 6.0f)));
-    public static final DeferredBlock<PlatinumFluidTankBlock> PLATINUM_FLUID_TANK = BLOCKS.register("platinum_fluid_tank",
+    public static final RegistryObject<PlatinumFluidTankBlock> PLATINUM_FLUID_TANK = BLOCKS.register("platinum_fluid_tank",
         () -> new PlatinumFluidTankBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion().isRedstoneConductor((s, l, p) -> true)));
-    public static final DeferredBlock<PlatinumFluidVesselBlock> PLATINUM_FLUID_VESSEL = BLOCKS.register("platinum_fluid_vessel",
+    public static final RegistryObject<PlatinumFluidVesselBlock> PLATINUM_FLUID_VESSEL = BLOCKS.register("platinum_fluid_vessel",
         () -> new PlatinumFluidVesselBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion().isRedstoneConductor((s, l, p) -> true)));
-    public static final DeferredBlock<CoralGeneratorBlock> CORAL_GENERATOR = BLOCKS.register("coral_generator",
+    public static final RegistryObject<CoralGeneratorBlock> CORAL_GENERATOR = BLOCKS.register("coral_generator",
         () -> new CoralGeneratorBlock(Block.Properties.of().mapColor(MapColor.COLOR_CYAN).sound(SoundType.STONE)
             .requiresCorrectToolForDrops().strength(3.5f, 3.0f).noOcclusion()));
-    public static final DeferredBlock<FeCableBlock> FE_CABLE = BLOCKS.register("cable",
+    public static final RegistryObject<FeCableBlock> FE_CABLE = BLOCKS.register("cable",
         () -> new FeCableBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
             .requiresCorrectToolForDrops().strength(1.75f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<CableHubBlock> CABLE_HUB = BLOCKS.register("cable_hub",
+    public static final RegistryObject<CableHubBlock> CABLE_HUB = BLOCKS.register("cable_hub",
         () -> new CableHubBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
             .requiresCorrectToolForDrops().strength(2.5f, 3.5f).noOcclusion()));
-    public static final DeferredBlock<CableRelayBlock> CABLE_RELAY = BLOCKS.register("cable_relay",
+    public static final RegistryObject<CableRelayBlock> CABLE_RELAY = BLOCKS.register("cable_relay",
         () -> new CableRelayBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
             .requiresCorrectToolForDrops().strength(2.5f, 3.5f)));
 
@@ -162,16 +163,16 @@ public class PropulsionBlocks {
         registerDefaultBlockItem("cable_hub", CABLE_HUB);
         registerDefaultBlockItem("cable_relay", CABLE_RELAY);
 
-        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "redstone_transmission"), 0, false);
-        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "tilt_adapter"), 0, false);
-        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "advanced_tilt_adapter"), 0, false);
+        PropulsionDefaultStress.setImpact(new ResourceLocation(CreatePropulsion.ID, "redstone_transmission"), 0, false);
+        PropulsionDefaultStress.setImpact(new ResourceLocation(CreatePropulsion.ID, "tilt_adapter"), 0, false);
+        PropulsionDefaultStress.setImpact(new ResourceLocation(CreatePropulsion.ID, "advanced_tilt_adapter"), 0, false);
     }
 
-    private static <T extends Block> void registerDefaultBlockItem(String name, DeferredBlock<T> block) {
+    private static <T extends Block> void registerDefaultBlockItem(String name, RegistryObject<T> block) {
         registerBlockItem(name, block, new BlockItem.Properties());
     }
 
-    private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block, BlockItem.Properties properties) {
+    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block, BlockItem.Properties properties) {
         BLOCK_ITEMS.register(name, () -> new BlockItem(block.get(), properties));
     }
 

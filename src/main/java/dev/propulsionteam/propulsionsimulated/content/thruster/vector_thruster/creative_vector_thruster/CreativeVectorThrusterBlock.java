@@ -1,6 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.creative_vector_thruster;
 
-import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
@@ -23,15 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CreativeVectorThrusterBlock extends VectorThrusterBlock implements IWrenchable {
-    public static final MapCodec<CreativeVectorThrusterBlock> CODEC = simpleCodec(CreativeVectorThrusterBlock::new);
 
     public CreativeVectorThrusterBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends net.minecraft.world.level.block.DirectionalBlock> codec() {
-        return CODEC;
     }
 
     @Override

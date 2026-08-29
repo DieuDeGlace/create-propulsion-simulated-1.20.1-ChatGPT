@@ -78,14 +78,14 @@ public class FeCableBlock extends Block implements IBE<FeCableBlockEntity>, IWre
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         boolean disabled = state.getValue(disabledPropertyFor(direction));
         CableNetworkManager.invalidateAround(level, pos);
         return state.setValue(propertyFor(direction), !disabled && canConnect(level, neighborPos, direction.getOpposite()));
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
             CableNetworkManager.invalidateAround(level, pos);
         }
@@ -181,7 +181,8 @@ public class FeCableBlock extends Block implements IBE<FeCableBlockEntity>, IWre
         if (!(level instanceof Level realLevel)) {
             return false;
         }
-        var storage = realLevel.getCapability(net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK, neighborPos, sideOnNeighbor);
+        var storage = dev.propulsionteam.propulsionsimulated.utility.ForgeCapabilityUtils.getBlockCapability(
+            realLevel, neighborPos, net.minecraftforge.common.capabilities.ForgeCapabilities.ENERGY, sideOnNeighbor);
         return storage != null;
     }
 
