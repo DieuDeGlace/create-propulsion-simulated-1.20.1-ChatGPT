@@ -4,6 +4,12 @@
 
 <h1 align="center">Create Propulsion: Simulated</h1>
 
+> **Forge 1.20.1 port:** active development continues on
+> `port/forge-1.20.1`. The user JAR/source baseline is locked to upstream
+> `cb56760`; platform migration and runtime validation are not complete. See
+> [port status](docs/PORT_STATUS.md), [baseline evidence](docs/UPSTREAM_BASELINE.md)
+> and the [dependency map](docs/DEPENDENCY_MAP.md).
+
 <p align="center">
   <a href="https://discord.gg/JHcArsDhh4">
     <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.3.1/assets/cozy/social/discord-plural_vector.svg">
