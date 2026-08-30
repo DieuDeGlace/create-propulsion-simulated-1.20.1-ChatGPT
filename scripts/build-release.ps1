@@ -9,8 +9,8 @@ $projectDir = Split-Path -Parent $PSScriptRoot
 $gradlePropertiesPath = Join-Path $projectDir 'gradle.properties'
 $gradleWrapperPath = Join-Path $projectDir 'gradlew.bat'
 $expectedBranch = 'port/forge-1.20.1'
-$expectedTests = 37
-$expectedSuites = 8
+$expectedTests = 40
+$expectedSuites = 9
 $expectedTaffySha256 = '3AE3B857CBB4392CCB3245778C9B7192522238CF66BD5AC413EAD4613FA80425'
 
 $requiredLocalFiles = [ordered]@{
@@ -449,6 +449,29 @@ try {
         'modId = "simulated"')) {
         if (-not $modsToml.Contains($requiredText)) {
             throw "Release JAR metadata is missing: $requiredText"
+        }
+    }
+    Assert-ZipEntries -Path $builtMainJar -RequiredEntries @(
+        'assets/minecraft/atlases/blocks.json',
+        'dev/propulsionteam/propulsionsimulated/mixin/client/CreativeModeInventoryScreenSelectedTabAccessor.class',
+        'dev/propulsionteam/propulsionsimulated/mixin/client/ItemPickerMenuMixin.class')
+    $mixinConfig = Read-ZipEntryText -Path $builtMainJar -EntryName 'createpropulsion.mixins.json'
+    foreach ($requiredMixin in @(
+        'client.CreativeModeInventoryScreenSelectedTabAccessor',
+        'client.ItemPickerMenuMixin')) {
+        if (-not $mixinConfig.Contains($requiredMixin)) {
+            throw "Release JAR Mixin config is missing: $requiredMixin"
+        }
+    }
+    if ($mixinConfig.Contains('"CreativeModeTabMixin"')) {
+        throw 'Release JAR still contains the superseded CreativeModeTabMixin.'
+    }
+    $atlasSources = Read-ZipEntryText -Path $builtMainJar -EntryName 'assets/minecraft/atlases/blocks.json'
+    foreach ($requiredSprite in @(
+        'createpropulsion:propulsion_banner',
+        'createpropulsion:creative_casing_banner')) {
+        if (-not $atlasSources.Contains($requiredSprite)) {
+            throw "Release JAR atlas source is missing: $requiredSprite"
         }
     }
     $taffyHash = Get-ZipEntryHash -Path $builtMainJar -EntryName 'META-INF/jarjar/taffy-1.1.4.jar'

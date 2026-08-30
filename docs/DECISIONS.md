@@ -8,8 +8,9 @@ JAR. Do not start the port from current upstream HEAD.
 
 ## D-002: target version and branch
 
-Use branch `port/forge-1.20.1` and planned version `1.1.5-port.1`. Preserve
-upstream `main` untouched.
+Use branch `port/forge-1.20.1`; `1.1.5-port.1` is the first formal checkpoint
+and `1.1.5-port.2` carries the PJ creative-tab regression fix. Preserve upstream
+`main` untouched.
 
 ## D-003: dependency inputs
 
@@ -80,3 +81,13 @@ upstream developer's machine, and its compiled `PatchConfig.class`. Neither
 file is referenced by Gradle, production sources or runtime resources. Remove
 both from the port checkpoint: retaining them would make the recovery workspace
 less reproducible without preserving any mod behaviour.
+
+## D-013: native Forge creative-tab contents, deferred visual padding
+
+Forge 1.20.1 and JEI must receive only real stacks from the tab's native
+`displayItems` generator. Section-spacing `ItemStack.EMPTY` values are added
+only to the selected creative-menu list, following the applicable Simulated
+1.3.2 compatibility design. This replaces Propulsion's fragile direct Mixin of
+`CreativeModeTab.buildContents` without changing item visibility or section
+order. Propulsion also declares its two banner textures as explicit block-atlas
+sprites; it does not modify or duplicate Simulated's own atlas entries.

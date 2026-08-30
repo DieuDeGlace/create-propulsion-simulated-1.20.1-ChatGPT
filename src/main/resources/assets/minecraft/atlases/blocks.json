@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "createpropulsion:gui/sprites/propulsion_banner",
+      "sprite": "createpropulsion:propulsion_banner"
+    },
+    {
+      "type": "single",
+      "resource": "createpropulsion:gui/sprites/creative_casing_banner",
+      "sprite": "createpropulsion:creative_casing_banner"
+    }
+  ]
+}

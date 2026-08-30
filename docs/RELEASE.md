@@ -7,12 +7,12 @@ refuses to package unless all of these conditions are true:
 
 - the current branch is `port/forge-1.20.1`;
 - the worktree is clean;
-- annotated tag `v1.1.5-port.1` points to the current commit;
+- annotated tag `v1.1.5-port.2` points to the current commit;
 - Gradle 8.14.3 is launched with Java 17;
 - the five ignored named development JARs match the SHA-256 values in
   [DEPENDENCY_MAP.md](DEPENDENCY_MAP.md);
 - Gradle dependency verification succeeds;
-- the clean build produces exactly 37 passing tests in 8 suites;
+- the clean build produces exactly 40 passing tests in 9 suites;
 - the production JAR metadata and embedded Taffy 1.1.4 hash match the locked
   release inputs.
 
@@ -24,9 +24,9 @@ therefore cannot silently be combined with the original checkpoint record.
 
 Successful packaging publishes:
 
-- `dist/createpropulsion-forge-1.20.1-1.1.5-port.1.jar` for a normal game
+- `dist/createpropulsion-forge-1.20.1-1.1.5-port.2.jar` for a normal game
   instance;
-- `release/1.1.5-port.1/` containing the production JAR, sources JAR,
+- `release/1.1.5-port.2/` containing the production JAR, sources JAR,
   tracked-source ZIP, minimal-workspace ZIP, build log, checkpoint record,
   dependency manifest, release notes and SHA-256 sums.
 

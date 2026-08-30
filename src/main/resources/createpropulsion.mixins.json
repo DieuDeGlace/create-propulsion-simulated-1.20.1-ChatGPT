@@ -8,12 +8,13 @@
     "mixins": [
         "BasinBlockEntityMixin",
         "BearingContraptionMixin",
-        "CreativeModeTabMixin",
         "FluidShellProjectileMixin",
         "SchematicPlacePacketMixin"
     ],
     "client": [
+        "client.CreativeModeInventoryScreenSelectedTabAccessor",
         "client.CreativeModeInventoryScreenMixin",
+        "client.ItemPickerMenuMixin",
         "client.SimulatedCreativeTabMixin"
     ],
     "server": [],

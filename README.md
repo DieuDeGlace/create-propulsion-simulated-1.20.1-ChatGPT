@@ -4,7 +4,7 @@
 
 <h1 align="center">Create Propulsion: Simulated</h1>
 
-> **Forge 1.20.1 port:** `1.1.5-port.1` is under final validation on
+> **Forge 1.20.1 port:** `1.1.5-port.2` is under final validation on
 > `port/forge-1.20.1`. The source/JAR baseline is locked to upstream
 > `cb56760`. Compilation, automated tests and client/server compatibility
 > smoke tests pass; representative in-world behaviour and final production-JAR

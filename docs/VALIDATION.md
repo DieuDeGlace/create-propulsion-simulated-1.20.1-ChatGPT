@@ -20,7 +20,7 @@ Last run on 2026-08-30 against the current working tree:
 | Check | Result | Evidence boundary |
 | --- | --- | --- |
 | Java compilation | Pass | Production and test source sets compile. |
-| Unit tests | Pass: 37/37 in 8 suites | Fuel math, cable distribution, worldgen limits and packet field round trips. |
+| Unit tests | Pass: 40/40 in 9 suites | Fuel math, cable distribution, worldgen limits, packet field round trips and creative-section padding invariants. |
 | Packet protocol | Pass | Fluid and solid fuel maps, removals and efficiency values survive encode/decode. |
 | Current clean build | Pass | `gradlew.bat clean build --no-daemon --stacktrace` completed on 2026-08-30. |
 | Formal release gate | Enforced by script | Every package rebuilds from the clean annotated checkpoint and publishes its own build log/checkpoint/SHA-256 evidence. |
@@ -52,6 +52,18 @@ instances must use the production Sable and Simulated bundle JARs.
 | Optional client | CC:Tweaked + KubeJS | Reached main menu; KubeJS startup/client reported 0 errors | Client-side present-mod paths and absent-mod gating work. |
 | CBC server | Create Big Cannons 5.11.4 + RPL 2.1.1 | Reached `Done`; `FluidShellProjectileMixin` applied; 0 Propulsion errors; clean stop/save | CBC's strong optional Mixin is correctly gated and applies to the exact tested CBC build. |
 | Maximum optional client | CBC + RPL + CC:Tweaked + KubeJS + formal Sable/Simulated/Aeronautics/Offroad | Reached main menu; no dependency, registry or Mixin failure | The tested optional-mod combination can bootstrap together. |
+
+## PJ creative-tab regression
+
+The 2026-08-30 PJ production log for port.1 reports that `Create Propulsion:
+Simulated` has no display/search items, while JEI rejects the empty padding
+stacks emitted by the old section layout. The same log confirms that
+`simulated:banner` is present in the atlas; Propulsion's own banner sprites had
+no atlas-source declaration. Port.2 replaces the direct `CreativeModeTab`
+Mixin with the Forge-native output generator, defers empty visual slots to the
+selected menu, and declares both Propulsion banner sprites. Compilation and all
+40 tests pass, including section-padding/idempotence coverage; PJ visual/runtime
+confirmation remains pending.
 
 The remaining model-bakery warning for
 `createpropulsion:partial/lodestone_tracker_overlay` is an inherited dormant

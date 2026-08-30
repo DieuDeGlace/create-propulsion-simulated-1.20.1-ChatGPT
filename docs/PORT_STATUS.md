@@ -5,9 +5,11 @@
 - Branch: `port/forge-1.20.1`
 - Source/JAR baseline: `cb567609ce9df4acba39b15de69edd40822ae173`
 - Baseline checkpoint: `97f6db3a66db479adb4a310c8c5b9b944b320d05`
-- Port version: `1.1.5-port.1`
-- Formal port checkpoint: annotated tag `v1.1.5-port.1`; the exact commit and
-  tag object are written into each verified release `CHECKPOINT.txt`
+- Port version: `1.1.5-port.2` candidate
+- Previous formal checkpoint: annotated tag `v1.1.5-port.1`
+- Current formal checkpoint: pending PJ creative-tab regression validation and
+  a verified tagged release; exact commit/tag objects are written into each
+  release `CHECKPOINT.txt`
 - State: recoverable engineering checkpoint; manual gameplay acceptance gates
   remain open
 - Original JAR SHA-256:
@@ -18,13 +20,13 @@
 | System | Status | Current evidence | Remaining acceptance gate |
 | --- | --- | --- | --- |
 | Source/JAR baseline | Complete | Exact resource/class/bytecode correspondence at `cb56760` | None |
-| Forge workspace | Implemented, verified | Forge 47.4.0, Java 17; current clean build and 37/37 tests pass | Repeat through the hash-locked release script at the tagged checkpoint |
+| Forge workspace | Implemented, verified | Forge 47.4.0, Java 17; current clean build and 40/40 tests pass | Repeat through the hash-locked release script at the tagged checkpoint |
 | Registries/config | Implemented, runtime verified | Client and dedicated server registry/config bootstrap | In-world registration spot checks |
 | Thrusters/physics | Implemented, partially verified | Math tests, Sable assembly/particle APIs compile and both sides load | Assemble/fly crafts; torque, obstruction and atmospheric comparison |
 | Fuel/heat/fluids | Implemented, partially verified | Reload summaries, fuel-consumption tests, packet round trips | Fill/burn/refuel and tank-side interaction gameplay |
 | FE cables/generation | Implemented, partially verified | Cable distribution tests; Forge capability cache/invalidation fixed | Live cable, hub, ion and coral generator network |
 | Platinum/worldgen | Implemented, partially verified | Five worldgen boundary tests; Forge biome modifiers load in a clean world | Confirm ore distribution and tank/vessel gameplay/persistence |
-| Client rendering/audio | Implemented, smoke verified | Base and maximum optional-mod clients reach main menu with no Propulsion errors | In-world plume, Flywheel, GUI, sound and sub-level rendering comparison |
+| Client rendering/audio | Implemented, regression fix under test | Base and maximum optional-mod clients reach main menu; port.2 adds the missing Propulsion banner atlas sources | PJ creative-tab/banner retest plus in-world plume, Flywheel, GUI, sound and sub-level rendering comparison |
 | Networking | Implemented, partially verified | Direction-locked protocol 2; fluid/solid packets preserve all fields in tests | Real client login, reload and server-authoritative desync test |
 | Tools/Ponder/GUI | Implemented, smoke verified | Resources and Ponder scenes register | Exercise assembler/glue/mover/cloner/remover and every Ponder scene |
 | CC:Tweaked | Present-mod/absent-mod loading verified | 1.120.2 server/client coexistence; official Forge peripheral provider | Attach peripherals and call each documented method |
@@ -32,7 +34,7 @@
 | Create Big Cannons | Present-mod/absent-mod loading verified | CBC 5.11.4 + RPL 2.1.1; FluidShell Mixin applies client/server | Fire coral fluid shell and compare blast scaling |
 | Dedicated server | Smoke verified | Isolated server reaches `Done`, 0 errors, graceful three-dimension save | Final production-JAR server and player login |
 | Save compatibility | Partially verified | Earlier core start/save/restart passed | Repeat at final checkpoint with machines, fluids and assembled craft |
-| Multi-mod compatibility | Smoke verified | CBC + RPL + CC + KubeJS + formal Sable/Simulated family reaches client menu | JEI/Simulated 1.3.2 dependency fix and representative gameplay |
+| Multi-mod compatibility | Smoke verified; PJ regression fix under test | CBC + RPL + CC + KubeJS + formal Sable/Simulated family reaches client menu; port.2 uses the native Forge tab generator and defers visual padding to the selected menu | Confirm Propulsion classification with JEI; Simulated 1.3.2 dependency fix and representative gameplay |
 | Release/recovery | Implemented | Java/Git/input/test/JAR checks, dependency verification, portable source/minimal-workspace archives and rollback-safe publish | Every formal package must be produced by the tagged one-click script |
 
 ## Known upstream/dependency gaps

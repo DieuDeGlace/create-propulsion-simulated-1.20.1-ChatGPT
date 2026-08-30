@@ -18,14 +18,13 @@ import net.minecraftforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class PropulsionCreativeTab {
+    private static final int ITEMS_PER_ROW = 9;
+
     public static final ResourceLocation MAIN_SECTION = new ResourceLocation(CreatePropulsion.ID, "propulsion_main");
     public static final ResourceLocation TOOLS_SECTION = new ResourceLocation(CreatePropulsion.ID, "propulsion_tools");
     public static final List<ResourceLocation> SECTIONS = List.of(MAIN_SECTION, TOOLS_SECTION);
@@ -34,10 +33,12 @@ public class PropulsionCreativeTab {
     private static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreatePropulsion.ID);
     private static final List<Supplier<Item>> TAB_ITEMS = new ArrayList<>();
+    private static final List<Integer> SECTION_ITEM_COUNTS = new ArrayList<>();
 
     public static final CreativeModeTab TAB = CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.createpropulsion.base"))
             .icon(() -> new ItemStack(PropulsionBlocks.THRUSTER_BLOCK.get()))
+            .displayItems((parameters, output) -> buildContents(output))
             .build();
 
     private static boolean sectionsInitialized = false;
@@ -103,7 +104,7 @@ public class PropulsionCreativeTab {
         SimulatedRegistrate.ITEM_TO_SECTION.put(new ResourceLocation(CreatePropulsion.ID, itemPath), sectionId);
     }
 
-    public static void buildContents(List<ItemStack> displayItems, Set<ItemStack> searchItems) {
+    private static void buildContents(CreativeModeTab.Output output) {
         Map<SimulatedSection, List<ItemStack>> sectionItems = new HashMap<>();
 
         for (Supplier<Item> itemSupplier : TAB_ITEMS) {
@@ -116,58 +117,37 @@ public class PropulsionCreativeTab {
 
             SimulatedSection section = SimResourceManagers.SIMULATED_SECTION.get(sectionId);
             if (section != null) {
-                sectionItems.computeIfAbsent(section, ignored -> new LinkedList<>())
+                sectionItems.computeIfAbsent(section, ignored -> new ArrayList<>())
                         .add(item.getDefaultInstance());
             }
         }
 
-        displayItems.clear();
-        searchItems.clear();
         SECTION_ROWS.clear();
-        addPadding(displayItems, 9);
+        SECTION_ITEM_COUNTS.clear();
 
         List<SimulatedSection> sortedSections = sectionItems.keySet().stream().sorted().toList();
         int row = 0;
-        for (int sectionIndex = 0; sectionIndex < sortedSections.size(); sectionIndex++) {
-            SimulatedSection section = sortedSections.get(sectionIndex);
+        for (SimulatedSection section : sortedSections) {
             int itemCount = 0;
 
             for (ItemStack originalStack : sectionItems.get(section)) {
                 ItemStack stack = CreativeTabItemTransforms.applyTransform(originalStack);
                 if (CreativeTabItemTransforms.VisibilityType.SEARCH_ONLY.has(stack.getItem())) {
-                    searchItems.add(stack);
+                    output.accept(stack, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
                 } else if (!CreativeTabItemTransforms.VisibilityType.INVISIBLE.has(stack.getItem())) {
-                    displayItems.add(stack);
-                    searchItems.add(stack);
+                    output.accept(stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
                     itemCount++;
                 }
             }
 
             ResourceLocation sectionId = SimResourceManagers.SIMULATED_SECTION.getId(section);
             SECTION_ROWS.put(sectionId, row);
-            row += (int) Math.ceil(itemCount / 9.0f) + 1;
-
-            if (sectionIndex < sortedSections.size() - 1) {
-                int padding = 9 - itemCount % 9;
-                if (padding < 9) {
-                    padding += 9;
-                }
-                addPadding(displayItems, padding);
-            }
+            SECTION_ITEM_COUNTS.add(itemCount);
+            row += (itemCount + ITEMS_PER_ROW - 1) / ITEMS_PER_ROW + 1;
         }
     }
 
-    public static List<ItemStack> newDisplayItems() {
-        return new LinkedList<>();
-    }
-
-    public static Set<ItemStack> newSearchItems() {
-        return new LinkedHashSet<>();
-    }
-
-    private static void addPadding(List<ItemStack> items, int count) {
-        for (int i = 0; i < count; i++) {
-            items.add(ItemStack.EMPTY);
-        }
+    public static void padMenuItems(List<ItemStack> items) {
+        CreativeTabLayout.padSections(items, SECTION_ITEM_COUNTS, ITEMS_PER_ROW, ItemStack.EMPTY);
     }
 }
