@@ -9,8 +9,8 @@ $projectDir = Split-Path -Parent $PSScriptRoot
 $gradlePropertiesPath = Join-Path $projectDir 'gradle.properties'
 $gradleWrapperPath = Join-Path $projectDir 'gradlew.bat'
 $expectedBranch = 'port/forge-1.20.1'
-$expectedTests = 40
-$expectedSuites = 9
+$expectedTests = 41
+$expectedSuites = 10
 $expectedTaffySha256 = '3AE3B857CBB4392CCB3245778C9B7192522238CF66BD5AC413EAD4613FA80425'
 
 $requiredLocalFiles = [ordered]@{
@@ -450,6 +450,10 @@ try {
         if (-not $modsToml.Contains($requiredText)) {
             throw "Release JAR metadata is missing: $requiredText"
         }
+    }
+    $manifest = Read-ZipEntryText -Path $builtMainJar -EntryName 'META-INF/MANIFEST.MF'
+    if (-not $manifest.Contains('MixinConfigs: createpropulsion.mixins.json')) {
+        throw 'Release JAR manifest does not register createpropulsion.mixins.json.'
     }
     Assert-ZipEntries -Path $builtMainJar -RequiredEntries @(
         'assets/minecraft/atlases/blocks.json',

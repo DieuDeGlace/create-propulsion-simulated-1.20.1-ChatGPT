@@ -15,14 +15,15 @@ main-menu launch is not treated as proof that a gameplay system is complete.
 
 ## Automated target checks
 
-Last run on 2026-08-30 against the current working tree:
+Last run on 2026-08-31 against the current working tree:
 
 | Check | Result | Evidence boundary |
 | --- | --- | --- |
 | Java compilation | Pass | Production and test source sets compile. |
-| Unit tests | Pass: 40/40 in 9 suites | Fuel math, cable distribution, worldgen limits, packet field round trips and creative-section padding invariants. |
+| Unit tests | Pass: 41/41 in 10 suites | Fuel math, cable distribution, worldgen limits, packet field round trips, creative-section padding and Forge event-bus routing invariants. |
 | Packet protocol | Pass | Fluid and solid fuel maps, removals and efficiency values survive encode/decode. |
-| Current clean build | Pass | `gradlew.bat clean build --no-daemon --stacktrace` completed on 2026-08-30. |
+| Current clean build | Pass | `gradlew.bat clean build --no-daemon --stacktrace` completed on 2026-08-31. |
+| Production Mixin registration | Pass, static | The JAR manifest declares `MixinConfigs: createpropulsion.mixins.json`; Gradle `check` and the release script verify both declaration and resource. PJ runtime application remains pending. |
 | Formal release gate | Enforced by script | Every package rebuilds from the clean annotated checkpoint and publishes its own build log/checkpoint/SHA-256 evidence. |
 | Minimal-workspace recovery | Pass for candidate `79f980d` | The published ZIP was independently extracted, its bundle cloned on the recorded branch, all five ignored named JARs reintroduced with matching hashes, the clone remained clean, and a fresh build passed 37/37 tests in 8 suites. |
 
@@ -62,13 +63,79 @@ stacks emitted by the old section layout. The same log confirms that
 no atlas-source declaration. Port.2 replaces the direct `CreativeModeTab`
 Mixin with the Forge-native output generator, defers empty visual slots to the
 selected menu, and declares both Propulsion banner sprites. Compilation and all
-40 tests pass, including section-padding/idempotence coverage; PJ visual/runtime
-confirmation remains pending.
+41 tests pass, including section-padding/idempotence coverage; PJ visual/runtime
+confirmation remains pending. The previous production candidate omitted the
+Mixin manifest declaration, so its native tab generator and atlas sources were
+present but its selected-menu spacing Mixins were not valid production
+evidence. The rebuilt candidate corrects that registration boundary.
 
 The remaining model-bakery warning for
 `createpropulsion:partial/lodestone_tracker_overlay` is an inherited dormant
 upstream asset gap described in [PORT_STATUS.md](PORT_STATUS.md), not a hidden
 runtime pass.
+
+## PJ null-shader crash regression
+
+The 2026-08-31 PJ run reached the single-player world, logged a save/pause and
+later failed while Oculus flushed the translucent world batch. Veil was the
+first code to dereference the null `ShaderInstance`, but it did not create the
+null. `PlumeRenderType` obtains its shader from `PlumeShaders::plume`, and the
+candidate JAR's subscriber had been attached to Forge's default game bus even
+though `RegisterShadersEvent` is an `IModBusEvent` published on the mod bus.
+The registration callback therefore never assigned the shader.
+
+This is a loader-semantics migration gap. The current NeoForge baseline can
+omit the bus because its subscriber machinery routes handlers by event type;
+Forge 47 defaults an omitted bus to `FORGE`. The same audit found that
+`PropulsionModConfigEvents` also receives an `IModBusEvent`, so both classes
+now explicitly select `Bus.MOD`. Tick, player-interaction and tooltip
+subscribers were inspected and correctly remain on the Forge game bus.
+
+The active save supplies direct trigger evidence. Its Sable sub-level contains
+a `createpropulsion:creative_thruster_block_entity` with plasma plume, normal
+control, redstone input 15, ten unobstructed exhaust blocks and full startup
+power. The same sub-level records substantial linear and angular velocity.
+With the PJ client in `PARTICLE` mode this strongly supports the conditions for
+crossing the adaptive-trail sampling threshold and submitting the same custom
+`PlumeRenderType`; shader mode also uses that RenderType. The aggregated
+Oculus stack does not name the originating RenderType, so reproduction remains
+the final attribution gate. The shader JSON, vertex/fragment resources, vertex
+format and renderer attributes otherwise match.
+
+The regression test reads compiled class annotations instead of booting a
+Minecraft client. It first failed against both omitted bus values and passes
+after the explicit routing repair. A first reflection-based form was rejected:
+accessing Forge's bus enum outside an initialized FML runtime triggered Forge
+`Bindings` before reaching the assertion. The replacement uses the already
+locked ASM 9.6 test dependency and validates bytecode metadata without weakening
+production code. The full clean build now passes 41/41 tests in 10 suites.
+
+## Production Mixin registration regression
+
+The supplied NeoForge JAR declares `createpropulsion.mixins.json` in its
+`[[mixins]]` metadata. The earlier Forge candidate contained the JSON, refmap
+and eight Mixin classes but neither a `MixinConfigs` manifest attribute nor a
+production launcher argument. Development runs masked this because ModDevGradle
+adds `--mixin.config` to its run configurations. A normal PJ launch does not.
+
+The Forge artifact now declares the configuration in `META-INF/MANIFEST.MF`.
+`verifyProductionJar`, wired into Gradle `check`, opens the final JAR and checks
+both the attribute and resource. The release script independently repeats the
+manifest check. No Mixin was copied, deleted or selectively registered; this
+restores the whole upstream configuration's production lifecycle.
+
+An entry-by-entry SHA-256 comparison before this manifest correction found the
+same 972 production archive entries and only the two expected subscriber
+classes plus the manifest timestamp changed. The final candidate adds only the
+manifest declaration to that same behavior change. Relative to the crashing
+candidate, the final archive still changes only those same three entries; the
+manifest difference is its timestamp plus `MixinConfigs`. Its exact hash is
+recorded after the final rebuild and PJ installation.
+
+Runtime acceptance remains open: the repaired production JAR must load the
+shader successfully, render the moving sub-level trail with the existing
+Veil/Oculus stack, survive pause/resume and resource reload, and exit cleanly.
+No renderer-mod-specific null guard or disabled draw path is part of the fix.
 
 ## Rejected or superseded runs
 
@@ -86,6 +153,10 @@ runtime pass.
 - The first packet unit-test design attempted full registry bootstrap and
   failed during test initialization. The registry-independent round-trip tests
   supersede it and all 37 tests pass.
+- The first post-crash rebuild corrected the two Forge MOD-bus subscribers and
+  passed 41/41 tests, but an independent artifact review found that production
+  Mixins still relied on a development-only launch argument. It was not
+  installed into PJ and was superseded by the manifest-registered candidate.
 - The first formal-packaging attempt was rejected before the build because its
   Gradle-version gate did not accept the carriage return in the real Windows
   PowerShell 5.1 output. The observed launcher was Gradle 8.14.3 on Microsoft

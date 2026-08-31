@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
-@EventBusSubscriber(modid = CreatePropulsion.ID)
+@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.MOD)
 public final class PropulsionModConfigEvents {
 
     private PropulsionModConfigEvents() {}

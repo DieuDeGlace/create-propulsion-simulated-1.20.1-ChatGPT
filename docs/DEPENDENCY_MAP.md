@@ -69,6 +69,11 @@ artifact as `3AE3B857CBB4392CCB3245778C9B7192522238CF66BD5AC413EAD4613FA80425`.
 
 1. Bootstrap and registries: NeoForge event bus/holders became Forge
    `DeferredRegister`/`RegistryObject` without reordering registrations.
+   NeoForge's automatic event-type routing is made explicit on Forge: handlers
+   for `IModBusEvent` select `Bus.MOD`, while gameplay events stay on the Forge
+   bus. NeoForge `[[mixins]]` metadata becomes the Forge production manifest's
+   `MixinConfigs` attribute; development-only launch arguments are not treated
+   as release registration.
 2. Saved state: 1.21 data components and holder lookup became 1.20.1 NBT and
    registry lookup while retaining field meanings and malformed-data checks.
 3. Capabilities: NeoForge block callbacks became Forge providers with stable

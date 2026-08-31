@@ -91,3 +91,34 @@ only to the selected creative-menu list, following the applicable Simulated
 `CreativeModeTab.buildContents` without changing item visibility or section
 order. Propulsion also declares its two banner textures as explicit block-atlas
 sprites; it does not modify or duplicate Simulated's own atlas entries.
+
+## D-014: make NeoForge automatic event routing explicit on Forge
+
+NeoForge's automatic subscriber routes handlers by whether their event type is
+an `IModBusEvent`, while Forge 47 defaults an omitted `EventBusSubscriber.bus`
+to the Forge game bus. Therefore `PlumeShaders` and
+`PropulsionModConfigEvents` explicitly select `Bus.MOD` on Forge. The other
+subscribers whose handlers receive Tick, interaction and tooltip events remain
+on the game bus.
+
+This restores the upstream lifecycle semantics instead of treating Veil or
+Oculus as the defect. The port does not catch the resulting null pointer,
+install a fallback shader, skip plume geometry or branch on the presence of a
+renderer mod. A bytecode-level unit test verifies the event type, explicit bus,
+static handler and `SubscribeEvent` annotation without starting an artificial
+Minecraft/OpenGL runtime.
+
+## D-015: register Mixins in the production Forge artifact
+
+The supplied NeoForge JAR declares `createpropulsion.mixins.json` through its
+`[[mixins]]` metadata. Forge 1.20.1 uses the production manifest's
+`MixinConfigs` attribute for the equivalent lifecycle. The development plugin
+adds `--mixin.config` to its own run configurations, but that launch argument
+is not present in a normal game instance and is not a substitute for artifact
+metadata.
+
+The production JAR therefore declares
+`MixinConfigs: createpropulsion.mixins.json`. Both the ordinary Gradle `check`
+lifecycle and the one-click release script fail if the declaration or resource
+is absent. This keeps the full Mixin set active in production rather than
+manually registering selected classes or special-casing the PJ launcher.

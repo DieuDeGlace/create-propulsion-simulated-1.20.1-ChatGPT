@@ -7,9 +7,11 @@
 > **Forge 1.20.1 port:** `1.1.5-port.2` is under final validation on
 > `port/forge-1.20.1`. The source/JAR baseline is locked to upstream
 > `cb56760`. Compilation, automated tests and client/server compatibility
-> smoke tests pass; representative in-world behaviour and final production-JAR
-> persistence tests remain acceptance gates. See [port status](docs/PORT_STATUS.md),
-> [validation evidence](docs/VALIDATION.md), [baseline evidence](docs/UPSTREAM_BASELINE.md)
+> smoke tests pass. The Forge shader/config event-bus and production Mixin
+> registration corrections are awaiting an in-world PJ regression run;
+> representative behaviour and final production-JAR persistence remain
+> acceptance gates. See [port status](docs/PORT_STATUS.md),
+> [validation evidence](docs/VALIDATION.md), [baseline evidence](docs/UPSTREAM_BASELINE.md),
 > [dependency map](docs/DEPENDENCY_MAP.md) and [release/recovery rules](docs/RELEASE.md).
 
 <p align="center">
