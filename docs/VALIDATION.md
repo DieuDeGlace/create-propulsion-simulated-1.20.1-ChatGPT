@@ -23,7 +23,7 @@ Last run on 2026-08-31 against the current working tree:
 | Unit tests | Pass: 41/41 in 10 suites | Fuel math, cable distribution, worldgen limits, packet field round trips, creative-section padding and Forge event-bus routing invariants. |
 | Packet protocol | Pass | Fluid and solid fuel maps, removals and efficiency values survive encode/decode. |
 | Current clean build | Pass | `gradlew.bat clean build --no-daemon --stacktrace` completed on 2026-08-31. |
-| Production Mixin registration | Pass, static | The JAR manifest declares `MixinConfigs: createpropulsion.mixins.json`; Gradle `check` and the release script verify both declaration and resource. PJ runtime application remains pending. |
+| Production Mixin registration | Pass, static plus bootstrap smoke | The JAR manifest declares `MixinConfigs: createpropulsion.mixins.json`; Gradle `check` and the release script verify both declaration and resource. A normal PJ production launch without `--mixin.config` reached the world with no logged Mixin bootstrap/apply failure; individual behavior remains pending. |
 | Formal release gate | Enforced by script | Every package rebuilds from the clean annotated checkpoint and publishes its own build log/checkpoint/SHA-256 evidence. |
 | Minimal-workspace recovery | Pass for candidate `79f980d` | The published ZIP was independently extracted, its bundle cloned on the recorded branch, all five ignored named JARs reintroduced with matching hashes, the clone remained clean, and a fresh build passed 37/37 tests in 8 suites. |
 
@@ -69,6 +69,11 @@ Mixin manifest declaration, so its native tab generator and atlas sources were
 present but its selected-menu spacing Mixins were not valid production
 evidence. The rebuilt candidate corrects that registration boundary.
 
+The 2026-08-31 production smoke did not emit the old "item group has no
+display items" message, but it still emitted 37 empty-air entries also observed
+without Propulsion. This is not visual evidence for either banner or selected-
+menu spacing, so the creative-tab acceptance gate remains open.
+
 The remaining model-bakery warning for
 `createpropulsion:partial/lodestone_tracker_overlay` is an inherited dormant
 upstream asset gap described in [PORT_STATUS.md](PORT_STATUS.md), not a hidden
@@ -91,15 +96,16 @@ Forge 47 defaults an omitted bus to `FORGE`. The same audit found that
 now explicitly select `Bus.MOD`. Tick, player-interaction and tooltip
 subscribers were inspected and correctly remain on the Forge game bus.
 
-The active save supplies direct trigger evidence. Its Sable sub-level contains
-a `createpropulsion:creative_thruster_block_entity` with plasma plume, normal
+The crash-time save snapshot written at 12:55:46 and inspected before the
+retest supplied direct trigger evidence. Its Sable sub-level contained a
+`createpropulsion:creative_thruster_block_entity` with plasma plume, normal
 control, redstone input 15, ten unobstructed exhaust blocks and full startup
-power. The same sub-level records substantial linear and angular velocity.
-With the PJ client in `PARTICLE` mode this strongly supports the conditions for
+power. The same snapshot recorded substantial linear and angular velocity.
+With the PJ client in `PARTICLE` mode this strongly supported the conditions for
 crossing the adaptive-trail sampling threshold and submitting the same custom
-`PlumeRenderType`; shader mode also uses that RenderType. The aggregated
-Oculus stack does not name the originating RenderType, so reproduction remains
-the final attribution gate. The shader JSON, vertex/fragment resources, vertex
+`PlumeRenderType`; shader mode also uses that RenderType. The aggregated Oculus
+stack does not name the originating RenderType, so reproduction remains the
+final attribution gate. The shader JSON, vertex/fragment resources, vertex
 format and renderer attributes otherwise match.
 
 The regression test reads compiled class annotations instead of booting a
@@ -130,12 +136,39 @@ classes plus the manifest timestamp changed. The final candidate adds only the
 manifest declaration to that same behavior change. Relative to the crashing
 candidate, the final archive still changes only those same three entries; the
 manifest difference is its timestamp plus `MixinConfigs`. Its exact hash is
-recorded after the final rebuild and PJ installation.
+`1E399E6FB3D50B11F90F860676D1A098D59CB5890B3A95E22FDCEA3EDD801F92`;
+the installed PJ copy and `build/libs` artifact matched exactly. The crashing
+candidate remains recoverable beside it as the non-loadable
+`createpropulsion-forge-1.20.1-1.1.5-port.2.jar.backup-C9E1CA0F8961-before-lifecycle-fix`.
 
-Runtime acceptance remains open: the repaired production JAR must load the
-shader successfully, render the moving sub-level trail with the existing
-Veil/Oculus stack, survive pause/resume and resource reload, and exit cleanly.
-No renderer-mod-specific null guard or disabled draw path is part of the fix.
+### 2026-08-31 bounded PJ production smoke
+
+The normal PJ launcher found the hash-locked candidate in the instance `mods`
+folder and entered the same single-player world at 13:46:46. The run saved the
+overworld, Nether, End and Sable sub-level data, then stopped the integrated
+server and client cleanly at 13:48:59. It produced no new crash report and the
+1,505-line log contains zero `shader is null` and zero `ReportedException`
+matches. The captured `latest.log` SHA-256 is
+`F801351165EE9BB1712A3039A50C608D2D4400E7FECE63B0EA74FC19D552E426`.
+
+This verifies production bootstrap, world entry, save and clean exit only. The
+two save/pause messages were followed by exit and do not prove pause/resume.
+The log does not prove that the craft moved far enough to submit an adaptive
+plume, that the plume was visible, that F3+T reloaded it, that either creative-
+tab banner rendered, or that every configured Mixin executed its behavior.
+Iris/Oculus explicitly reported shader packs disabled, so shaderpack-on
+compatibility was not part of this smoke.
+
+The post-run sub-level save contains four powered plasma Propulsion thrusters in
+the player's loaded craft, but its final linear speed is only about 0.132 m/s
+and it has no serialized angular velocity. This proves that active thrusters
+were loaded inside the test scene, not that the client accumulated enough
+motion samples to activate and draw the adaptive trail.
+
+Runtime acceptance remains open: clean exit was observed once, but the repaired
+production JAR must still render the moving sub-level trail with the existing
+Veil/Oculus stack and survive pause/resume and resource reload. No renderer-mod-
+specific null guard or disabled draw path is part of the fix.
 
 ## Rejected or superseded runs
 

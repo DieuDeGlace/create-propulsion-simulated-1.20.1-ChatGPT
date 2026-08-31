@@ -9,8 +9,8 @@ JAR. Do not start the port from current upstream HEAD.
 ## D-002: target version and branch
 
 Use branch `port/forge-1.20.1`; `1.1.5-port.1` is the first formal checkpoint
-and `1.1.5-port.2` carries the PJ creative-tab regression fix. Preserve upstream
-`main` untouched.
+and `1.1.5-port.2` carries the candidate PJ creative-tab and Forge lifecycle
+repairs. Preserve upstream `main` untouched.
 
 ## D-003: dependency inputs
 
@@ -120,5 +120,7 @@ metadata.
 The production JAR therefore declares
 `MixinConfigs: createpropulsion.mixins.json`. Both the ordinary Gradle `check`
 lifecycle and the one-click release script fail if the declaration or resource
-is absent. This keeps the full Mixin set active in production rather than
-manually registering selected classes or special-casing the PJ launcher.
+is absent. This makes the complete upstream Mixin configuration discoverable
+to normal Forge production launches rather than manually registering selected
+classes or special-casing the PJ launcher. Individual application and behavior
+remain runtime validation items.
