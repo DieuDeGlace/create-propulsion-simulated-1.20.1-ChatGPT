@@ -9,11 +9,11 @@
 - Previous formal checkpoint: annotated tag `v1.1.5-port.1`
 - Lifecycle-fix code checkpoint:
   `0a0de01d3cc559429f15eb7fa143d64a286e4080`
-- Current formal checkpoint: pending PJ creative-tab/plume regression
-  validation and a verified tagged release; exact commit/tag objects are
-  written into each release `CHECKPOINT.txt`
-- State: recoverable engineering checkpoint; manual gameplay acceptance gates
-  remain open
+- Current formal checkpoint: pending a verified tagged release; exact
+  commit/tag objects are written into each release `CHECKPOINT.txt`
+- State: recoverable engineering checkpoint; the user reported no observed
+  issue in the follow-up PJ manual validation, while detailed reproducibility
+  and formal packaging gates remain open
 - Original JAR SHA-256:
   `5525A3A0C8B1C476CBC467D021E9D1492B58C78DE31ED269EB04F169D42DB0A1`
 
@@ -28,7 +28,7 @@
 | Fuel/heat/fluids | Implemented, partially verified | Reload summaries, fuel-consumption tests, packet round trips | Fill/burn/refuel and tank-side interaction gameplay |
 | FE cables/generation | Implemented, partially verified | Cable distribution tests; Forge capability cache/invalidation fixed | Live cable, hub, ion and coral generator network |
 | Platinum/worldgen | Implemented, partially verified | Five worldgen boundary tests; Forge biome modifiers load in a clean world | Confirm ore distribution and tank/vessel gameplay/persistence |
-| Client rendering/audio | Implemented, regression fix under test | Banner atlas sources are present; a Forge MOD-bus registration defect directly consistent with the PJ null-shader crash was repaired. One production-JAR PJ smoke entered, saved and exited without reproducing the exception; production Mixins are declared instead of relying on development launch arguments | Move the powered sub-level thruster to trigger its adaptive plume, pause then resume, reload resources, and visually compare plume, creative-tab layout/banner, Flywheel, GUI, sound and sub-level rendering |
+| Client rendering/audio | Implemented, user smoke accepted; formal evidence pending | Banner atlas sources are present; a Forge MOD-bus registration defect directly consistent with the PJ null-shader crash was repaired. One production-JAR PJ smoke entered, saved and exited without reproducing the exception, and the user later reported no observed issue in manual validation | Preserve reproducible evidence for the powered adaptive plume, pause/resume, resource reload and visual creative-tab/banner comparison during the formal release run |
 | Networking | Implemented, partially verified | Direction-locked protocol 2; fluid/solid packets preserve all fields in tests | Real client login, reload and server-authoritative desync test |
 | Tools/Ponder/GUI | Implemented, smoke verified | Resources and Ponder scenes register | Exercise assembler/glue/mover/cloner/remover and every Ponder scene |
 | CC:Tweaked | Present-mod/absent-mod loading verified | 1.120.2 server/client coexistence; official Forge peripheral provider | Attach peripherals and call each documented method |
@@ -36,7 +36,7 @@
 | Create Big Cannons | Present-mod/absent-mod loading verified | CBC 5.11.4 + RPL 2.1.1; the FluidShell Mixin applies in development runs, and a CBC-present PJ production launch reached the world with no logged Mixin bootstrap/apply failure | Confirm individual production application, then fire a coral fluid shell and compare blast scaling |
 | Dedicated server | Smoke verified | Isolated server reaches `Done`, 0 errors, graceful three-dimension save | Final production-JAR server and player login |
 | Save compatibility | Partially verified | Earlier core start/save/restart passed | Repeat at final checkpoint with machines, fluids and assembled craft |
-| Multi-mod compatibility | Smoke verified; PJ regressions under test | CBC + RPL + CC and the formal Sable/Simulated family reached the same PJ world, saved and exited cleanly with the production candidate; KubeJS remains backed by separate isolated client/server runs. No Veil/Oculus special case was added, and both lifecycle events and Mixins use Forge production registration paths | Confirm Propulsion classification/banner with JEI, individual production Mixin behavior, the moving-plume scene, and the dependency-owned Simulated 1.3.2 fixes |
+| Multi-mod compatibility | Smoke verified; user PJ smoke accepted | CBC + RPL + CC and the formal Sable/Simulated family reached the same PJ world, saved and exited cleanly with the production candidate; KubeJS remains backed by separate isolated client/server runs. The user reported no observed issue in follow-up manual validation | Preserve subsystem-specific evidence for Propulsion classification/banner, individual production Mixin behavior, the moving-plume scene, and dependency-owned Simulated 1.3.2 fixes |
 | Release/recovery | Implemented | Java/Git/input/test/JAR checks, dependency verification, portable source/minimal-workspace archives and rollback-safe publish | Every formal package must be produced by the tagged one-click script |
 
 ## Known upstream/dependency gaps

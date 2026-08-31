@@ -165,10 +165,16 @@ and it has no serialized angular velocity. This proves that active thrusters
 were loaded inside the test scene, not that the client accumulated enough
 motion samples to activate and draw the adaptive trail.
 
-Runtime acceptance remains open: clean exit was observed once, but the repaired
-production JAR must still render the moving sub-level trail with the existing
-Veil/Oculus stack and survive pause/resume and resource reload. No renderer-mod-
-specific null guard or disabled draw path is part of the fix.
+### User-reported follow-up acceptance
+
+After the bounded smoke, the user reported that the installed candidate showed
+no observed issue in their follow-up PJ manual validation. This accepts the
+observed manual regression result. No per-action transcript, screenshot or new
+log accompanied that confirmation, so it is not retroactively treated as
+independent evidence that every detailed plume, pause/resume, F3+T, banner or
+conditional-Mixin gate executed. Those reproducibility checks remain part of
+the formal release run. No renderer-mod-specific null guard or disabled draw
+path is part of the fix.
 
 ## Rejected or superseded runs
 
