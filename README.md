@@ -61,15 +61,17 @@ recorded in [the dependency map](docs/DEPENDENCY_MAP.md).
 ## Building this port
 
 The Git source checkout by itself is intentionally not a complete build input.
-Five hash-locked named development JARs from the formal Sable/Simulated
-workspaces are ignored by Git and must be placed in `libs/`; their exact names
-and SHA-256 values are recorded in [the dependency map](docs/DEPENDENCY_MAP.md).
+Five named development JARs from the formal Sable/Simulated workspaces are
+ignored by Git and must be placed in `libs/`; their exact names and observed
+SHA-256 values are recorded in [the dependency map](docs/DEPENDENCY_MAP.md).
+Normal builds validate their versions and API/JAR contracts without pinning old
+file hashes; `-Pverify_reference_mod_hashes=true` restores the audit lock.
 These mapped JARs are for compilation and development runs only and are not the
 JARs to install in a normal game instance.
 
 Use Java 17 and run `gradlew.bat clean build` after those inputs are present.
-At a clean annotated checkpoint, `build-release.bat` performs the hash-locked
-clean build and creates both a tracked-source archive and a recoverable minimal
+At a clean annotated checkpoint, `build-release.bat` records the current input
+hashes, performs a clean build, and creates both a tracked-source archive and a recoverable minimal
 workspace. See [release and recovery](docs/RELEASE.md). Until the remaining
 manual gameplay gates pass, a generated package is an engineering checkpoint,
 not a claim that the migration is fully accepted.
