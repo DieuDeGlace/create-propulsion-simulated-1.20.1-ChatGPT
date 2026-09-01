@@ -176,6 +176,52 @@ conditional-Mixin gate executed. Those reproducibility checks remain part of
 the formal release run. No renderer-mod-specific null guard or disabled draw
 path is part of the fix.
 
+## DeceasedCraft KubeJS runtime-floor regression
+
+The 2026-09-01 DeceasedCraft FML report stopped before mod construction because
+the installed KubeJS `2001.6.5-build.16` did not satisfy Propulsion's declared
+`[2001.6.5-build.26,)` range. The supplied upstream 1.1.5 NeoForge JAR has no
+KubeJS dependency declaration; the Forge port had turned its tested compile
+version into an unproven minimum when the optional integration was introduced.
+
+The complete production linkage was audited before changing metadata. It is
+limited to `KubeJSPlugin`, `registerBindings(BindingsEvent)` and
+`BindingsEvent.add(String, Object)`. Those API classes, KubeJS's plugin scanner
+and `kubejs.plugins.txt` are byte-for-byte identical in build.16 and build.26;
+no other production source imports KubeJS or Rhino. The default compile/test
+version therefore remains build.26 while the runtime range is now
+`[2001.6.5-build.16,)`.
+
+A clean build with `kubejs_version=2001.6.5-build.16` and the optional KubeJS
+runtime enabled compiled all production and test code, passed 41/41 tests in 10
+suites, and passed the final production-JAR gate. An isolated dedicated-server
+run then loaded the transformed build.16 JAR, loaded 1/1 KubeJS server scripts
+with 0 errors and 0 warnings, completed KubeJS's server resource reload and
+reached `Done (3.521s)`. The reused development world also reported missing
+CBC/RPL registry entries from an older optional-mod run; those unrelated world
+warnings are not treated as a clean-world result. The detached background
+console did not forward Minecraft's `stop` command, so this run was interrupted
+after reaching `Done` and is not evidence of a graceful server shutdown.
+
+This verifies the build.16 binary linkage, plugin discovery, script loading and
+server bootstrap. The final default-build production JAR still requires an
+actual DeceasedCraft launch, followed by fuel add/remove/reload and reconnect
+behavior checks.
+
+The subsequent default-build clean build restored build.26 as the compile/test
+input, passed the same 41/41 tests in 10 suites and produced the final candidate
+with SHA-256
+`6AF359E9393A13F5A3461C1E14FE9709D369A11C93BA332A10D6D2A0B5E1F5E2`.
+Its production `mods.toml` contains `[2001.6.5-build.16,)`. A complete archive
+comparison against the DeceasedCraft crash candidate found 1,138 entries in
+both, no added or removed entries and exactly two changed entries: the intended
+KubeJS range in `META-INF/mods.toml` and the build timestamp in
+`META-INF/MANIFEST.MF`. The candidate was installed after preserving the prior
+JAR, SHA-256
+`5C6D92E8ADAF010D674E26E1158260E37CA57EEEC4A92657278B5498F0185390`,
+as a non-loadable `.backup-*` file. Actual-instance launch evidence is recorded
+only after a fresh DeceasedCraft run.
+
 ## Rejected or superseded runs
 
 - The detached original NeoForge source build stopped while CurseMaven
@@ -185,6 +231,10 @@ path is part of the fix.
   legacy development plugin did not propagate KubeJS metadata dependencies.
   Exact declared versions were then added to the optional test runtime and the
   isolated reruns passed.
+- The first build.16 compatibility command left the PowerShell Gradle property
+  unquoted. PowerShell split the dotted value into a nonexistent task before
+  Gradle compiled any source. The quoted rerun described above supersedes that
+  command-line failure; it is not an API or source-code failure.
 - The first CBC attempt reused a world previously opened with CC:Tweaked and
   KubeJS, producing missing-registry messages for the removed test mods. That
   run was rejected. The isolated `compat-server` rerun created its own world

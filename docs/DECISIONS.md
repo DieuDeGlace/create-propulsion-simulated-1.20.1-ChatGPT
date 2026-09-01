@@ -124,3 +124,17 @@ is absent. This makes the complete upstream Mixin configuration discoverable
 to normal Forge production launches rather than manually registering selected
 classes or special-casing the PJ launcher. Individual application and behavior
 remain runtime validation items.
+
+## D-016: separate the KubeJS compile version from the runtime floor
+
+The Forge port compiles and performs its default optional-runtime checks against
+KubeJS `2001.6.5-build.26`, but that tested build is not itself a semantic
+minimum. Propulsion's entire 1.20.1 KubeJS linkage is the plugin superclass,
+`registerBindings(BindingsEvent)` and `BindingsEvent.add(String, Object)`.
+Those two API classes, KubeJS's plugin scanner and its plugin descriptor are
+byte-for-byte identical in build.16 and build.26.
+
+The production metadata therefore accepts `[2001.6.5-build.16,)` while the
+default compile/test dependency remains build.26. This restores compatibility
+with the DeceasedCraft KubeJS stack without removing the integration, bypassing
+Forge dependency checks or claiming compatibility with unexamined older builds.

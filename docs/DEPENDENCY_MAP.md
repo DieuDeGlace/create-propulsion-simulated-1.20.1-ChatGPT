@@ -48,7 +48,7 @@ JarJar; the three separate named JARs are only needed by userdev.
 | Integration | Exact tested version | Build/runtime boundary | SHA-256 where locked |
 | --- | --- | --- | --- |
 | CC:Tweaked | 1.120.2 | compile-only; optional test runtime | Maven-resolved |
-| KubeJS | 2001.6.5-build.26 | compile-only; optional test runtime | Maven-resolved |
+| KubeJS | compile/default test: 2001.6.5-build.26; runtime floor: 2001.6.5-build.16 | compile-only; optional test runtime | build.16 instance JAR: `3DE6B7267D3AAB981848ED54D3AFE7EDF20532FA4060631FD6FFFCD99AC5F3D5` |
 | Architectury API | 9.1.12 | mandatory KubeJS test-runtime dependency | Maven-resolved |
 | Rhino | 2001.2.2-build.17 | mandatory KubeJS test-runtime dependency | Maven-resolved |
 | Create Big Cannons | 5.11.4, Modrinth artifact `ZRgu5o3x` | compile-only; optional test runtime | `11845F0D79A9014977F667A57B14D0527928BEE8B66BC6B50BEDCC29EE81878A` |
@@ -58,6 +58,12 @@ Legacy ModDev does not propagate KubeJS or CBC mod metadata dependencies into
 the test run automatically. The optional properties add their exact declared
 runtime dependencies explicitly; this affects development validation only and
 does not bundle optional mods into Propulsion.
+
+The KubeJS runtime floor is based on the complete API surface referenced by the
+port, not on version-number similarity. `KubeJSPlugin.class`,
+`BindingsEvent.class`, `KubeJSPlugins.class` and `kubejs.plugins.txt` have
+identical SHA-256 values in build.16 and build.26. No other production source
+imports KubeJS or Rhino types.
 
 `gradle/verification-metadata.xml` locks the SHA-256 values of the default build
 graph, the five local named artifacts and the fully enabled CC/KubeJS/CBC test
