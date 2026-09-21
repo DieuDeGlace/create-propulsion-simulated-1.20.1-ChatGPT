@@ -4,6 +4,11 @@
 
 <h1 align="center">Create Propulsion: Simulated</h1>
 
+> **ChatGPT-assisted compatibility update:** this working branch targets Forge
+> 47.4.10 and the Simulated/Aeronautics/Offroad 1.3.2-port.1 bundle. The
+> combined client and an existing singleplayer world loaded successfully.
+> Individual Propulsion machines and flight behavior still need gameplay tests.
+
 > **Forge 1.20.1 port:** `1.1.5-port.2` is under final validation on
 > `port/forge-1.20.1`. The source/JAR baseline is locked to upstream
 > `cb56760`. Compilation, automated tests and client/server compatibility
@@ -37,13 +42,13 @@
 
 ## Forge 1.20.1 dependencies
 
-The port targets Minecraft 1.20.1, Forge 47.4.0 and Java 17. A normal game
+The port targets Minecraft 1.20.1, Forge 47.4.10 and Java 17. A normal game
 instance requires these production mods:
 
 - Create 6.0.8 and Flywheel 1.0.5;
 - Veil 1.0.0.296;
 - [Sable 2.0.5-port.1](https://github.com/NotAsher999/sable-1.20.1);
-- [Simulated/Aeronautics/Offroad 1.3.1-port.1 bundle](https://github.com/NotAsher999/Simulated-Project-1.20.1).
+- [Simulated/Aeronautics/Offroad 1.3.2-port.1 bundle](https://github.com/DieuDeGlace/Simulated-Project-1.20.1-ChatGPT).
 
 The last two links are the formal 1.20.1 port repositories used by this
 project. Download or build their production distribution JARs for a normal
